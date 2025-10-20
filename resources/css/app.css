@@ -1,0 +1,539 @@
+/* ============================================
+   リセット & ベース
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    height: 100%;
+}
+
+body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+}
+
+/* ============================================
+   App（ルート）
+   ============================================ */
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.header__logo-link {
+    color: #fff;
+    transition: opacity 0.3s ease;
+}
+
+.header__logo-link:hover {
+    opacity: 0.9;
+}
+
+.header__nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.header__nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.header__nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.header__nav-link--active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* ============================================
+   Main
+   ============================================ */
+.main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+.main__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    margin-top: auto;
+}
+
+.footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.footer__text {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* ============================================
+   Alert（フラッシュメッセージ）
+   ============================================ */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert--success {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+}
+
+.alert--error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+.alert__icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.alert__message {
+    flex: 1;
+}
+
+.alert__list {
+    list-style: disc;
+    padding-left: 1.25rem;
+}
+
+.alert__list-item {
+    margin: 0.25rem 0;
+}
+
+/* ============================================
+   Page Header
+   ============================================ */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.page-header__description {
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+/* ============================================
+   Card
+   ============================================ */
+.card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card__header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.card__body {
+    padding: 1.5rem;
+}
+
+.card__footer {
+    padding: 1rem 1.5rem;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   Button
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.btn--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+.btn--secondary {
+    background: #fff;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.btn--secondary:hover {
+    background: #f5f7ff;
+}
+
+.btn--success {
+    background: #10b981;
+    color: #fff;
+}
+
+.btn--success:hover {
+    background: #059669;
+}
+
+.btn--danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+.btn--danger:hover {
+    background: #dc2626;
+}
+
+.btn--outline {
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+}
+
+.btn--outline:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn--small {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+}
+
+.btn--large {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+}
+
+.btn--block {
+    width: 100%;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   Button Group
+   ============================================ */
+.btn-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-group--right {
+    justify-content: flex-end;
+}
+
+.btn-group--center {
+    justify-content: center;
+}
+
+/* ============================================
+   Form
+   ============================================ */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.form-label--required::after {
+    content: '*';
+    color: #ef4444;
+    margin-left: 0.25rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input--error {
+    border-color: #ef4444;
+}
+
+.form-input--error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-error {
+    color: #ef4444;
+    font-size: 0.8125rem;
+    margin-top: 0.375rem;
+}
+
+.form-help {
+    color: #6b7280;
+    font-size: 0.8125rem;
+    margin-top: 0.375rem;
+}
+
+/* ============================================
+   Filter Bar
+   ============================================ */
+.filter-bar {
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-bar__label {
+    font-weight: 500;
+    color: #374151;
+    margin-right: 1rem;
+    font-size: 0.875rem;
+}
+
+.filter-bar__buttons {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.filter-bar__button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #6b7280;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.filter-bar__button:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.filter-bar__button--active {
+    background: #667eea;
+    color: #fff;
+    border-color: #667eea;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state__icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.empty-state__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state__message {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   レスポンシブデザイン
+   ============================================ */
+@media (max-width: 768px) {
+    .header__container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header__nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .main__container {
+        padding: 0 1rem;
+    }
+
+    .page-header__title {
+        font-size: 1.5rem;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+
+    .header__container {
+        padding: 1rem;
+    }
+
+    .header__nav {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .main {
+        padding: 1rem 0;
+    }
+
+    .filter-bar {
+        padding: 0.75rem 1rem;
+    }
+
+    .filter-bar__buttons {
+        display: flex;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .filter-bar__button {
+        flex: 1;
+    }
+}
