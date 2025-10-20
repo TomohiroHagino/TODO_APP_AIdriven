@@ -340,23 +340,75 @@ font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Rob
 ## CSSファイルの構成
 
 ```
-public/css/
-└── app.css          # 全スタイル（BEM方式）
-    ├── リセット & ベース
-    ├── App（ルート）
-    ├── Header
-    ├── Main
-    ├── Footer
-    ├── Alert
-    ├── Page Header
-    ├── Card
-    ├── Button
-    ├── Button Group
-    ├── Form
-    ├── Filter Bar
-    ├── Empty State
-    └── レスポンシブデザイン
+resources/css/
+├── app.css                  # 共通スタイル（BEM方式）
+│   ├── リセット & ベース
+│   ├── App（ルート）
+│   ├── Header
+│   ├── Main
+│   ├── Footer
+│   ├── Alert
+│   ├── Page Header
+│   ├── Card
+│   ├── Button
+│   ├── Button Group
+│   ├── Form
+│   ├── Filter Bar
+│   ├── Empty State
+│   └── レスポンシブデザイン
+│
+└── todos/                   # Todosリソース専用スタイル
+    ├── common.css           # Todos共通スタイル
+    │   └── Additional Button Variants
+    │
+    ├── index.css            # 一覧ページ専用
+    │   ├── Todo List
+    │   ├── Todo Item
+    │   └── レスポンシブデザイン
+    │
+    ├── show.css             # 詳細ページ専用
+    │   ├── Badge
+    │   ├── Detail List
+    │   └── レスポンシブデザイン
+    │
+    └── edit.css             # 編集ページ専用
+        └── Info Box
 ```
+
+### ファイル分割の方針
+
+#### レベル1: アプリケーション全体
+- **app.css**: 全ページで使用する共通コンポーネント（ヘッダー、フッター、ボタン、フォームなど）
+
+#### レベル2: リソース単位
+- **todos/**: Todosリソース専用のディレクトリ
+
+#### レベル3: ページ単位
+- **todos/common.css**: Todosの全ページで共通のスタイル
+- **todos/index.css**: 一覧ページ専用のスタイル
+- **todos/show.css**: 詳細ページ専用のスタイル
+- **todos/edit.css**: 編集ページ専用のスタイル
+- **todos/create.blade.php**: common.cssのみ使用（専用スタイルなし）
+
+### CSS読み込みの仕組み
+
+各ビューファイルで`@push('styles')`を使用して、必要なCSSのみを読み込みます：
+
+```blade
+@push('styles')
+<style>
+    {!! file_get_contents(resource_path('css/todos/common.css')) !!}
+    {!! file_get_contents(resource_path('css/todos/index.css')) !!}
+</style>
+@endpush
+```
+
+### メリット
+
+✅ **パフォーマンス向上**: 各ページで必要なCSSのみを読み込むため、ファイルサイズが削減  
+✅ **保守性向上**: ページごとにスタイルが分離されているため、変更の影響範囲が明確  
+✅ **スケーラビリティ**: 新しいページを追加する際も同じパターンで対応可能  
+✅ **関心の分離**: リソース単位、ページ単位で明確に分離されている
 
 ## 今後の拡張
 

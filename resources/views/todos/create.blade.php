@@ -2,6 +2,12 @@
 
 @section('title', 'Todo作成')
 
+@push('styles')
+<style>
+    {!! file_get_contents(resource_path('css/todos/common.css')) !!}
+</style>
+@endpush
+
 @section('content')
 <div class="page-header">
     <h1 class="page-header__title">➕ 新しいタスクを作成</h1>

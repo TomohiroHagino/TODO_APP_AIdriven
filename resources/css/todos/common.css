@@ -1,0 +1,14 @@
+/* ============================================
+   Todo共通スタイル
+   ============================================ */
+
+/* Additional Button Variants */
+.btn--warning {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.btn--warning:hover {
+    background: #d97706;
+}
+
