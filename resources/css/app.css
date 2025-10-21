@@ -1,10 +1,13 @@
-/* Todo App - BEM CSS */
-@import './common.css';
-@import './todos/index.css';
-@import './todos/show.css';
-@import './todos/edit.css';
-
 /* Tailwind CSS(Laravel Breezeで使用) */
 @tailwind base;
 @tailwind components;
+
+/* Todo App - BEM CSS（Tailwind componentsレイヤー内） */
+@layer components {
+    @import './common.css';
+    @import './todos/index.css';
+    @import './todos/show.css';
+    @import './todos/edit.css';
+}
+
 @tailwind utilities;
