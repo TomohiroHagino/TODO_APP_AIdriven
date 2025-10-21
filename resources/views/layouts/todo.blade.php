@@ -15,8 +15,16 @@
                 <h1 class="layout__title">📝 Todo App</h1>
                 <nav class="nav">
                     @auth
-                        <a href="{{ route('todos.index') }}" class="nav__link">Todos</a>
-                        <span class="text-muted">{{ Auth::user()->name }}</span>
+                        <a href="{{ route('todos.index') }}" class="nav__link {{ request()->routeIs('todos.*') ? 'nav__link--active' : '' }}">
+                            📋 Todos
+                        </a>
+                        <a href="{{ route('profile.edit') }}" class="nav__link {{ request()->routeIs('profile.*') ? 'nav__link--active' : '' }}">
+                            👤 プロフィール
+                        </a>
+                        <div style="border-left: 1px solid #e5e7eb; height: 24px; margin: 0 0.5rem;"></div>
+                        <span class="text-muted" style="margin-right: 0.5rem;">
+                            {{ Auth::user()->name }}
+                        </span>
                         <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                             @csrf
                             <button type="submit" class="btn btn--secondary btn--small">ログアウト</button>
