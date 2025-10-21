@@ -280,57 +280,101 @@ http://localhost:8000 にアクセス
 
 ## 🧪 テスト
 
-（テスト実行コマンド）
+```bash
+# 全テスト実行
+php artisan test
+
+# カバレッジ付きテスト実行
+XDEBUG_MODE=coverage php artisan test --coverage
+
+# 特定のテストを実行
+php artisan test tests/Feature/TodoControllerTest.php
+```
 
 ---
 
 ## 🛠 技術スタック
 
-（Laravel / Breeze / Blade / BEM / SQLite / Pest）
+- **Framework**: Laravel 12
+- **Authentication**: Laravel Breeze
+- **Frontend**: 
+  - Blade Template Engine
+  - BEM CSS (カスタムUI)
+  - Tailwind CSS (認証ページのみ)
+  - Vite (Asset Bundler)
+- **Database**: SQLite (デフォルト)
+- **Testing**: PHPUnit + Pest
+- **Architecture**: DDD + Layered Architecture
 
 ---
 
 ## 🔑 主要な設計パターン
 
-（Aggregate / Repository / Value Object / Application Service / DI）
+### 1. Aggregate Pattern
+User AggregateがTodoを所有し、整合性を保証
+
+### 2. Repository Pattern
+データアクセスを抽象化し、Domain層をインフラから分離
+
+### 3. Value Object
+不変の値オブジェクトでドメインルールをカプセル化
+
+### 4. Application Service
+ユースケースを1つのトランザクション単位で実装
+
+### 5. Dependency Injection
+Laravel Service Containerによる疎結合
 
 ---
 
 ## 🤔 「2つのモデル」問題の解決
 
-（EloquentとDomain Entityの分離解説）
+このアプリケーションでは、**Eloquent Model** と **Domain Entity** が共存しています。
 
 ---
 
 ## 📝 主要なコマンド
 
-（artisanコマンド集）
+```bash
+# マイグレーション
+php artisan migrate
+php artisan migrate:fresh  # 全テーブル削除して再作成
 
----
+# テスト
+php artisan test
+php artisan test --filter TodoControllerTest
+
+# キャッシュクリア
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# コード生成
+php artisan make:migration CreateXxxTable
+php artisan make:model XxxModel
+php artisan make:controller XxxController
+```
 
 ## 🎯 今後の拡張案
 
-- [ ] Todo に期限（deadline）追加  
-- [ ] TodoをProjectで分類  
-- [ ] Todoへのタグ付け機能  
-- [ ] TodoのソートとフィルタリングUI  
-- [ ] API化（Laravel Sanctum）  
-- [ ] Event Sourcing導入  
-- [ ] CQRS パターン適用  
-
----
+- [ ] Todo に期限（deadline）追加
+- [ ] TodoをProjectで分類
+- [ ] Todoへのタグ付け機能
+- [ ] TodoのソートとフィルタリングUI
+- [ ] API化（Laravel Sanctum）
+- [ ] Event Sourcing導入
+- [ ] CQRS パターン適用
 
 ## 📚 参考資料
 
-- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)  
-- [Laravel Documentation](https://laravel.com/docs)  
-- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)  
-
----
+- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)
+- [Laravel Documentation](https://laravel.com/docs)
+- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
 ## 📄 ライセンス
 
-MIT License  
+MIT License
 
 ---
 
