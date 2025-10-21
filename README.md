@@ -324,6 +324,9 @@ php artisan db:table todos
 # 全テスト実行
 php artisan test
 
+# カバレッジ付きで実行
+XDEBUG_MODE=coverage php artisan test --coverage
+
 # 特定のテストのみ実行
 php artisan test --filter=CreateTodoServiceTest
 ```
@@ -387,18 +390,6 @@ testapp/
 ### 編集画面 (`/todos/{id}/edit`)
 - タスク名の編集
 
-## 🧪 テスト
-
-```bash
-# 全テスト実行
-php artisan test
-
-# カバレッジ付きで実行
-XDEBUG_MODE=coverage php artisan test --coverage
-
-# 特定のディレクトリのみ
-php artisan test tests/Unit/Domain
-```
 
 ## 📝 主要なコマンド
 
