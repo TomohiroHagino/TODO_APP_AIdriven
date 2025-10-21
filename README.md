@@ -11,7 +11,7 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 - ✅ **認証機能**: Laravel Breeze統合
 - ✅ **ValueObject**: ドメインロジックのカプセル化
 - ✅ **Repository Pattern**: データアクセスの抽象化
-- ✅ **モダンUI**: Tailwind CSS + Breeze
+- ✅ **モダンUI**: BEM CSS (カスタムデザイン) + Laravel Breeze (認証)
 
 ## 🏗 アーキテクチャ
 
@@ -95,6 +95,48 @@ app/
     └── Todo.php                        # Eloquent Model
 ```
 
+### View & CSS 構造
+
+```
+resources/
+├── views/
+│   ├── layouts/
+│   │   └── main.blade.php              # カスタムBEMレイアウト
+│   │
+│   ├── components/
+│   │   ├── header.blade.php            # カスタムヘッダーコンポーネント
+│   │   └── breeze/                     # Laravel Breeze認証コンポーネント
+│   │       ├── app-layout.blade.php
+│   │       ├── guest-layout.blade.php
+│   │       ├── navigation.blade.php
+│   │       └── (その他13個のコンポーネント)
+│   │
+│   ├── todos/                          # Todoページビュー
+│   │   ├── index.blade.php
+│   │   ├── create.blade.php
+│   │   ├── show.blade.php
+│   │   └── edit.blade.php
+│   │
+│   ├── auth/                           # 認証ページ（Breeze）
+│   └── profile/                        # プロフィール
+│
+└── css/
+    ├── app.css                         # エントリーポイント
+    ├── common.css                      # 共通スタイル（ヘッダー、ボタン、レイアウト）
+    └── todos/                          # ページ固有スタイル
+        ├── index.css
+        ├── show.css
+        └── edit.css
+```
+
+**設計原則**:
+- `layouts/`: カスタムレイアウト（`main.blade.php`のみ）
+- `components/`: 再利用可能なコンポーネント
+- `components/breeze/`: Laravel Breeze関連を分離
+- `css/common.css`: アプリ全体の共通スタイル
+- `css/todos/`: Todosページ固有のスタイル
+```
+
 ### レイヤー間の依存関係
 
 ```
@@ -147,10 +189,19 @@ npm run dev
 ### 開発サーバー起動
 
 ```bash
+# アセットをビルド（初回またはCSSを変更した場合）
+npm run build
+
 # Laravelサーバー起動
 php artisan serve
+```
 
-# 別ターミナルでVite起動
+**ホットリロード開発の場合**:
+```bash
+# ターミナル1: Laravelサーバー
+php artisan serve
+
+# ターミナル2: Vite（ホットリロード）
 npm run dev
 ```
 
@@ -160,7 +211,11 @@ http://localhost:8000 にアクセス
 
 1. **ユーザー登録**: `/register` から新規ユーザー作成
 2. **ログイン**: `/login` からログイン
-3. **Todo作成**: 認証後、自動的にTodo一覧画面へ
+3. **Todo管理**: 認証後、自動的に `/todos` へリダイレクト
+   - Todo一覧表示
+   - 新規Todo作成
+   - Todo編集・削除
+   - ステータス切り替え（未完了 ⇄ 完了）
 
 ## 📖 ユースケース
 
@@ -224,7 +279,11 @@ php artisan test tests/Feature/TodoControllerTest.php
 
 - **Framework**: Laravel 12
 - **Authentication**: Laravel Breeze
-- **Frontend**: Blade + Tailwind CSS
+- **Frontend**: 
+  - Blade Template Engine
+  - BEM CSS (カスタムUI)
+  - Tailwind CSS (認証ページのみ)
+  - Vite (Asset Bundler)
 - **Database**: SQLite (デフォルト)
 - **Testing**: PHPUnit + Pest
 - **Architecture**: DDD + Layered Architecture
