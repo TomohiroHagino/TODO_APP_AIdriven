@@ -51,8 +51,8 @@ app/
 │   │
 │   └── UserAggregate/                 # User集約
 │       ├── Entity/
-│       │   ├── User.php               # Aggregate Root
-│       │   └── Todo.php               # 子エンティティ
+│       │   ├── UserEntity.php         # Aggregate Root
+│       │   └── TodoEntity.php         # 子エンティティ
 │       ├── ValueObject/
 │       │   ├── UserId.php
 │       │   ├── UserName.php
@@ -91,8 +91,8 @@ app/
 │       └── UpdateTodoRequest.php
 │
 └── Models/                             # Eloquent ORM
-    ├── User.php                        # UserModel (認証用)
-    └── TodoModel.php
+    ├── User.php                        # Eloquent Model (認証用)
+    └── Todo.php                        # Eloquent Model
 ```
 
 ### レイヤー間の依存関係
@@ -245,6 +245,58 @@ User AggregateがTodoを所有し、整合性を保証
 
 ### 5. Dependency Injection
 Laravel Service Containerによる疎結合
+
+## 🤔 「2つのモデル」問題の解決
+
+このアプリケーションでは、**Eloquent Model** と **Domain Entity** が共存しています。
+
+### モデルの使い分け
+
+```php
+// Infrastructure層 - Eloquent Model
+App\Models\User          // データベース操作用
+App\Models\Todo
+
+// Domain層 - Domain Entity
+App\Domain\UserAggregate\Entity\UserEntity    // ビジネスロジック用
+App\Domain\UserAggregate\Entity\TodoEntity
+```
+
+### 役割の違い
+
+| 項目 | Eloquent Model | Domain Entity |
+|------|----------------|---------------|
+| **役割** | データの永続化 | ビジネスロジック |
+| **レイヤー** | Infrastructure層 | Domain層 |
+| **責務** | DB操作・リレーション | ドメインルール・不変条件 |
+| **依存** | Laravel/Eloquent | フレームワーク非依存 |
+| **使用場所** | Repository実装 | Application Service |
+
+### Repository が橋渡し
+
+`UserRepository` が2つのモデル間を変換：
+
+```php
+// Infrastructure/UserAggregate/Repository/UserRepository.php
+use App\Models\User as UserModel;              // Eloquent
+use App\Domain\UserAggregate\Entity\UserEntity; // Domain
+
+public function findById(UserId $userId): ?UserEntity
+{
+    // 1. Eloquent Modelで取得
+    $userModel = UserModel::with('todos')->find($userId->getValue());
+    
+    // 2. Domain Entityに変換
+    return $this->toDomain($userModel);
+}
+```
+
+### メリット
+
+✅ **ドメイン層の独立性**: フレームワーク変更に強い  
+✅ **テスタビリティ**: Domain層は純粋なPHP  
+✅ **ビジネスロジックの集約**: Domain Entityに集中  
+✅ **永続化の柔軟性**: Eloquent以外にも変更可能
 
 ## 📝 主要なコマンド
 
