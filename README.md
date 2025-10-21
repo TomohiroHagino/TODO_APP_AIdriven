@@ -121,7 +121,7 @@ graph TD
   end
 
   %% ドメインモデルの外にある認証機能
-  Auth["認証機能（Devise など）"]
+  Auth["認証機能（Laravel Breeze）"]
 
   %% 認証はドメインモデル外からUserEntityに作用することを示す点線矢印
   Auth -.->|ログイン/ログアウト| UserEntity
