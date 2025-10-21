@@ -394,7 +394,7 @@ testapp/
 php artisan test
 
 # カバレッジ付きで実行
-php artisan test --coverage
+XDEBUG_MODE=coverage php artisan test --coverage
 
 # 特定のディレクトリのみ
 php artisan test tests/Unit/Domain
