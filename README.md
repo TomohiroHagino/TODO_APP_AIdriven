@@ -111,11 +111,11 @@ User (Aggregate Root)
 ```mermaid
 graph TD
   %% バウンデッドコンテキストを表すクラスタ
-  subgraph BC["Todo管理コンテキスト (バウンデッドコンテキスト)"]
+  subgraph BC["Todo管理コンテキスト (Bounded Context)"]
     %% アグリゲートを表すクラスタ
     subgraph AG["ユーザー集約 (Aggregate Root)"]
-      UserEntity["UserEntity\n（ユーザーエンティティ）"]
-      TodoEntity["TodoEntity\n（Todoエンティティ）"]
+      UserEntity["UserEntity"]
+      TodoEntity["TodoEntity"]
     end
     UserEntity -->|所有| TodoEntity
   end
