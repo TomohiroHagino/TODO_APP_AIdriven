@@ -13,7 +13,7 @@ use App\Domain\UserAggregate\ValueObject\TodoId;
 use App\Domain\UserAggregate\ValueObject\UserId;
 use App\Domain\UserAggregate\ValueObject\UserName;
 use App\Models\TodoModel;
-use App\Models\UserModel;
+use App\Models\User as UserModel;  // Eloquent Model（Domain層のUserと区別）
 
 /**
  * UserRepository実装（Eloquent）

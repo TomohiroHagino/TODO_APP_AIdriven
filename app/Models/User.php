@@ -8,25 +8,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * UserModel（Eloquent）
+ * User（Eloquent Model）
  * 
  * Infrastructure層のORMモデル
  * Domain層のUserエンティティとは別物
+ * 
+ * NOTE: クラス名は Laravel の規約に従い「User」としています
+ *       Domain層の User エンティティと混同しないよう注意が必要です
+ *       - このクラス: App\Models\User (Eloquent ORM)
+ *       - Domain層: App\Domain\UserAggregate\Entity\User (Domain Entity)
  */
-class UserModel extends Authenticatable
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     protected $table = 'users';
-
-    /**
-     * ファクトリを作成
-     */
-    protected static function newFactory()
-    {
-        return \Database\Factories\UserFactory::new();
-    }
 
     /**
      * The attributes that are mass assignable.
@@ -70,6 +67,3 @@ class UserModel extends Authenticatable
         return $this->hasMany(TodoModel::class, 'user_id');
     }
 }
-
-// エイリアス（Laravel認証システムとの互換性のため）
-class_alias(UserModel::class, 'App\Models\User');
