@@ -1,211 +1,117 @@
-# 📝 Todo App
+# 📝 Todo App - DDD User Aggregate Architecture
 
-LaravelとDDD（ドメイン駆動設計）で実装したシンプルなTodoアプリケーションです。
+LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプリケーションです。
 
-## 📋 目次
+**User Aggregate Root**を中心とした本格的なDDDアーキテクチャを採用し、ドメインモデルとインフラストラクチャを明確に分離しています。
 
-- [機能](#-機能)
-- [ユースケース](#-ユースケース)
-- [技術スタック](#-技術スタック)
-- [アーキテクチャ](#-アーキテクチャ)
-- [セットアップ](#-セットアップ)
-- [アプリケーションの起動](#-アプリケーションの起動)
-- [開発](#-開発)
-- [ドキュメント](#-ドキュメント)
+## ✨ 主な特徴
 
-## ✨ 機能
-
-- ✅ タスクの作成
-- ✅ タスク一覧の表示
-- ✅ タスクの詳細表示
-- ✅ タスクの編集
-- ✅ タスクの削除
-- ✅ タスクの完了/未完了切替
-- ✅ ステータスでの絞り込み（全て/完了/未完了）
-
-## 📖 ユースケース
-
-このアプリケーションでは、6つのユースケースを実装しています。各ユースケースは`app/Application/Todo/Service/`ディレクトリ内のサービスクラスとして実装されています。
-
-### 1. タスクを作成する（CreateTodoService）
-
-**アクター**: ユーザー  
-**目的**: 新しいタスクを登録する
-
-**メインフロー**:
-1. ユーザーが「新規作成」ボタンをクリック
-2. システムが作成フォームを表示
-3. ユーザーがタスク名を入力（1〜255文字）
-4. ユーザーが「作成」ボタンをクリック
-5. システムがタスクをデータベースに保存
-6. システムが一覧画面にリダイレクト
-7. システムが成功メッセージを表示
-
-**実装**: [`CreateTodoService.php`](app/Application/Todo/Service/CreateTodoService.php)
-
----
-
-### 2. タスク一覧を表示する（ListTodosService）
-
-**アクター**: ユーザー  
-**目的**: 登録されているタスクの一覧を確認する
-
-**メインフロー**:
-1. ユーザーが一覧ページにアクセス
-2. システムが全タスクをデータベースから取得
-3. システムがタスクを作成日時の降順で並び替え
-4. システムが一覧画面を表示
-
-**代替フロー**:
-- ユーザーが「完了」フィルターを選択 → 完了タスクのみ表示
-- ユーザーが「未完了」フィルターを選択 → 未完了タスクのみ表示
-
-**実装**: [`ListTodosService.php`](app/Application/Todo/Service/ListTodosService.php)
-
----
-
-### 3. タスクの詳細を表示する（GetTodoDetailService）
-
-**アクター**: ユーザー  
-**目的**: 特定のタスクの詳細情報を確認する
-
-**メインフロー**:
-1. ユーザーが一覧画面でタスクを選択
-2. ユーザーが「詳細」ボタンまたはタスク名をクリック
-3. システムが指定されたIDのタスクを取得
-4. システムがタスクの詳細情報を表示
-   - タスク名
-   - ステータス（完了/未完了）
-   - 作成日時
-   - タスクID
-
-**実装**: [`GetTodoDetailService.php`](app/Application/Todo/Service/GetTodoDetailService.php)
-
----
-
-### 4. タスクを編集する（UpdateTodoService）
-
-**アクター**: ユーザー  
-**目的**: タスクの内容を変更する
-
-**メインフロー**:
-1. ユーザーが詳細画面または一覧画面で「編集」ボタンをクリック
-2. システムが編集フォームを表示（既存のタイトルを入力済み）
-3. ユーザーが新しいタスク名を入力
-4. ユーザーが「更新」ボタンをクリック
-5. システムがタスク名をバリデーション
-6. システムがタスクのタイトルを更新
-7. システムが詳細画面にリダイレクト
-8. システムが成功メッセージを表示
-
-**実装**: [`UpdateTodoService.php`](app/Application/Todo/Service/UpdateTodoService.php)
-
----
-
-### 5. タスクの完了状態を切り替える（ToggleTodoStatusService）
-
-**アクター**: ユーザー  
-**目的**: タスクを完了/未完了の状態に切り替える
-
-**メインフロー**:
-1. ユーザーが一覧画面でタスクのチェックボックスをクリック
-2. システムがタスクの完了状態を反転
-   - 未完了 → 完了
-   - 完了 → 未完了
-3. システムが変更をデータベースに保存
-4. システムが一覧画面を再表示
-5. システムがタスクの表示を更新
-   - 完了タスク: 打ち消し線、グレー背景、チェックマーク
-   - 未完了タスク: 通常表示
-
-**実装**: [`ToggleTodoStatusService.php`](app/Application/Todo/Service/ToggleTodoStatusService.php)
-
----
-
-### 6. タスクを削除する（DeleteTodoService）
-
-**アクター**: ユーザー  
-**目的**: 不要なタスクをシステムから削除する
-
-**メインフロー**:
-1. ユーザーが削除対象のタスクを選択
-2. ユーザーが削除ボタンをクリック
-3. ユーザーが削除の確認ダイアログで「OK」を選択
-4. システムがタスクをデータベースから削除
-5. システムが一覧画面にリダイレクト
-6. システムが成功メッセージを表示
-
-**実装**: [`DeleteTodoService.php`](app/Application/Todo/Service/DeleteTodoService.php)
-
----
-
-### ユースケースの実装パターン
-
-このアプリケーションでは、**1クラス = 1ユースケース**の原則で実装されています。
-
-```php
-// 例: CreateTodoService.php
-class CreateTodoService
-{
-    public function handle(string $title): void
-    {
-        // ユースケースのフローを実装
-        $id = $this->repository->nextId();
-        $todo = new Todo($id, new TaskTitle($title), false, new \DateTimeImmutable());
-        $this->repository->save($todo);
-    }
-}
-```
-
-各サービスクラスのソースコードには、詳細なユースケース仕様がコメントとして記載されています。
-
-## 🛠 技術スタック
-
-### バックエンド
-- **PHP**: 8.4.8
-- **Laravel**: 12.34.0
-- **SQLite**: 3.43.2
-
-### フロントエンド
-- **HTML/CSS**: BEM方式
-- **Blade**: テンプレートエンジン
-
-### アーキテクチャ
-- **DDD**: ドメイン駆動設計
-- **Repository Pattern**: データアクセスの抽象化
-- **Service Layer**: ユースケースの実装
+- ✅ **DDD (Domain-Driven Design)**: User Aggregateを中心とした設計
+- ✅ **レイヤードアーキテクチャ**: Domain、Application、Infrastructure、Presentationの4層構造
+- ✅ **認証機能**: Laravel Breeze統合
+- ✅ **ValueObject**: ドメインロジックのカプセル化
+- ✅ **Repository Pattern**: データアクセスの抽象化
+- ✅ **モダンUI**: Tailwind CSS + Breeze
 
 ## 🏗 アーキテクチャ
 
+### User Aggregate
+
+このアプリケーションは**User Aggregate**を中心に設計されています。
+
+```
+User (Aggregate Root)
+├── UserId (ValueObject)
+├── UserName (ValueObject)
+├── Email (ValueObject)
+└── Todos (子エンティティのコレクション)
+    └── Todo (子エンティティ)
+        ├── TodoId (ValueObject)
+        ├── TaskTitle (ValueObject)
+        ├── TaskStatus (ValueObject)
+        └── DateTimeValue (ValueObject)
+```
+
+**重要な原則**:
+- TodoはUserに所有される（Userなしでは存在しない）
+- TodoへのすべてのCRUD操作はUser経由で行う
+- User削除時にTodoも自動削除される（Cascade）
+
+### ディレクトリ構造
+
 ```
 app/
-├── Application/          # アプリケーション層（ユースケース）
-│   └── Todo/Service/
-├── Domain/               # ドメイン層（ビジネスロジック）
-│   └── Todo/
-│       ├── Entity/       # エンティティ
-│       ├── ValueObject/  # 値オブジェクト
-│       └── Repository/   # リポジトリインターフェース
-├── Infrastructure/       # インフラ層（データ永続化）
-│   └── Todo/Repository/
-├── Http/                 # プレゼンテーション層
-│   └── Controllers/
-└── Models/               # Eloquent Model
+├── Domain/                            # ドメイン層
+│   ├── Shared/                        # 共通部品
+│   │   ├── ValueObject/
+│   │   │   ├── Id.php                 # ID基底クラス
+│   │   │   └── DateTimeValue.php     # 日時値オブジェクト
+│   │   └── Exception/
+│   │       └── DomainException.php    # ドメイン例外基底
+│   │
+│   └── UserAggregate/                 # User集約
+│       ├── Entity/
+│       │   ├── User.php               # Aggregate Root
+│       │   └── Todo.php               # 子エンティティ
+│       ├── ValueObject/
+│       │   ├── UserId.php
+│       │   ├── UserName.php
+│       │   ├── Email.php
+│       │   ├── TodoId.php
+│       │   ├── TaskTitle.php
+│       │   └── TaskStatus.php
+│       ├── Repository/
+│       │   └── UserRepositoryInterface.php
+│       ├── Event/                     # ドメインイベント
+│       │   ├── UserCreated.php
+│       │   ├── TodoAdded.php
+│       │   └── TodoUpdated.php
+│       └── Service/
+│           └── UserDomainService.php  # ドメインサービス
+│
+├── Application/                        # アプリケーション層
+│   └── UserAggregate/
+│       └── Service/                    # ユースケース実装
+│           ├── AddTodoToUserService.php
+│           ├── UpdateTodoOfUserService.php
+│           ├── ToggleTodoStatusService.php
+│           ├── DeleteTodoOfUserService.php
+│           └── GetUserTodosService.php
+│
+├── Infrastructure/                     # インフラ層
+│   └── UserAggregate/
+│       └── Repository/
+│           └── UserRepository.php      # Eloquent実装
+│
+├── Http/                               # プレゼンテーション層
+│   ├── Controllers/
+│   │   └── TodoController.php
+│   └── Requests/
+│       ├── StoreTodoRequest.php
+│       └── UpdateTodoRequest.php
+│
+└── Models/                             # Eloquent ORM
+    ├── User.php                        # UserModel (認証用)
+    └── TodoModel.php
 ```
 
-### レイヤー構成
+### レイヤー間の依存関係
 
 ```
-Presentation Layer (Controller)
-        ↓
-Application Layer (Service/UseCase)
-        ↓
-Domain Layer (Entity/ValueObject)
-        ↓
-Infrastructure Layer (Repository)
-        ↓
-Database (SQLite)
+Presentation (HTTP, View)
+    ↓ depends on
+Application (Use Cases)
+    ↓ depends on
+Domain (Business Logic) ← CORE
+    ↑ implements
+Infrastructure (DB, External)
 ```
+
+**ルール**:
+- Domain層は他の層に依存しない
+- Application層はDomain層のみに依存
+- Infrastructure層はDomain層のインターフェースを実装
+- Presentation層はApplication層を呼び出す
 
 ## 🚀 セットアップ
 
@@ -213,213 +119,176 @@ Database (SQLite)
 
 - PHP 8.2以上
 - Composer
-- SQLite
+- SQLite（またはMySQL/PostgreSQL）
+- Node.js & npm
 
-### インストール
+### インストール手順
 
 ```bash
-# リポジトリのクローン
-git clone <repository-url>
-cd testapp
-
-# 依存関係のインストール
+# 依存パッケージをインストール
 composer install
+npm install
 
-# データベースのマイグレーション
+# 環境設定ファイルをコピー
+cp .env.example .env
+
+# アプリケーションキーを生成
+php artisan key:generate
+
+# データベースマイグレーション
 php artisan migrate
+
+# アセットをビルド
+npm run dev
 ```
 
 ## 🎮 アプリケーションの起動
 
-### 開発サーバーの起動
+### 開発サーバー起動
 
 ```bash
-# Laravelの開発サーバーを起動
+# Laravelサーバー起動
 php artisan serve
+
+# 別ターミナルでVite起動
+npm run dev
 ```
 
-ブラウザで以下のURLにアクセス:
-```
-http://localhost:8000
-```
+http://localhost:8000 にアクセス
 
-### ポート番号を指定する場合
+### 初回利用
 
-```bash
-# 別のポートで起動する場合
-php artisan serve --port=8080
-```
+1. **ユーザー登録**: `/register` から新規ユーザー作成
+2. **ログイン**: `/login` からログイン
+3. **Todo作成**: 認証後、自動的にTodo一覧画面へ
 
-### ホストを指定する場合
+## 📖 ユースケース
 
-```bash
-# ネットワーク経由でアクセス可能にする場合
-php artisan serve --host=0.0.0.0 --port=8000
-```
+### 1. ユーザーにTodoを追加する
+**Service**: `AddTodoToUserService`
 
-### バックグラウンドで起動
+**フロー**:
+1. 認証ユーザーを取得
+2. 新しいTodoIDを採番
+3. UserにTodoを追加
+4. Userを保存（Todoも一緒に保存）
 
-```bash
-# バックグラウンドで起動
-php artisan serve &
+### 2. ユーザーのTodoを更新する
+**Service**: `UpdateTodoOfUserService`
 
-# プロセスを確認
-ps aux | grep artisan
+**フロー**:
+1. Userを取得
+2. UserからTodoを検索
+3. Todoのタイトルを変更
+4. Userを保存
 
-# 停止する場合
-pkill -f "artisan serve"
-```
+### 3. Todoステータスを切り替える
+**Service**: `ToggleTodoStatusService`
 
-### トラブルシューティング
+**フロー**:
+1. Userを取得
+2. UserからTodoを検索
+3. Todoのステータスを切り替え
+4. Userを保存
 
-#### ポートが使用中の場合
+### 4. ユーザーのTodoを削除する
+**Service**: `DeleteTodoOfUserService`
 
-```bash
-# ポート8000が使用中の場合、別のポートを使用
-php artisan serve --port=8001
-```
+**フロー**:
+1. Userを取得
+2. UserからTodoを削除
+3. Userを保存
 
-#### "Operation not permitted"エラーの場合
+### 5. ユーザーのTodo一覧を取得する
+**Service**: `GetUserTodosService`
 
-```bash
-# すでにサーバーが起動していないか確認
-lsof -i :8000
+**フロー**:
+1. Userを取得
+2. Userの全Todosを取得
+3. フィルター適用（必要に応じて）
 
-# プロセスを終了
-kill -9 <PID>
-```
-
-## 🔧 開発
-
-### データベースのリセット
-
-```bash
-# データベースを再作成
-php artisan migrate:fresh
-```
-
-### ルート一覧の確認
-
-```bash
-# 全ルート表示
-php artisan route:list
-
-# Todoルートのみ表示
-php artisan route:list --path=todos
-```
-
-### データベースの状態確認
-
-```bash
-# データベース情報表示
-php artisan db:show
-
-# テーブル構造表示
-php artisan db:table todos
-```
-
-### テストの実行
+## 🧪 テスト
 
 ```bash
 # 全テスト実行
 php artisan test
 
-# カバレッジ付きで実行
+# カバレッジ付きテスト実行
 XDEBUG_MODE=coverage php artisan test --coverage
 
-# 特定のテストのみ実行
-php artisan test --filter=CreateTodoServiceTest
+# 特定のテストを実行
+php artisan test tests/Feature/TodoControllerTest.php
 ```
 
-### コードスタイル
+## 🛠 技術スタック
 
-```bash
-# Laravel Pintでコード整形
-./vendor/bin/pint
-```
+- **Framework**: Laravel 12
+- **Authentication**: Laravel Breeze
+- **Frontend**: Blade + Tailwind CSS
+- **Database**: SQLite (デフォルト)
+- **Testing**: PHPUnit + Pest
+- **Architecture**: DDD + Layered Architecture
 
-## 📚 ドキュメント
+## 🔑 主要な設計パターン
 
-プロジェクトのドキュメントは`docs/`ディレクトリに格納されています：
+### 1. Aggregate Pattern
+User AggregateがTodoを所有し、整合性を保証
 
-- **[データモデリング](docs/data-modeling.md)** - データベース設計
-- **[コントローラー&ルーティング](docs/controller-routing.md)** - HTTPレイヤー
-- **[BEM CSS設計](docs/bem-css-design.md)** - CSSアーキテクチャ
+### 2. Repository Pattern
+データアクセスを抽象化し、Domain層をインフラから分離
 
-## 📂 ディレクトリ構造
+### 3. Value Object
+不変の値オブジェクトでドメインルールをカプセル化
 
-```
-testapp/
-├── app/
-│   ├── Application/          # アプリケーション層
-│   ├── Domain/               # ドメイン層
-│   ├── Infrastructure/       # インフラ層
-│   ├── Http/                 # HTTPレイヤー
-│   └── Models/               # Eloquentモデル
-├── database/
-│   ├── migrations/           # マイグレーション
-│   └── database.sqlite       # SQLiteデータベース
-├── resources/
-│   ├── css/                  # CSSファイル
-│   └── views/                # Bladeテンプレート
-│       ├── layouts/
-│       └── todos/
-├── routes/
-│   └── web.php               # Webルート定義
-├── tests/                    # テスト
-│   ├── Unit/
-│   └── Feature/
-└── docs/                     # ドキュメント
-```
+### 4. Application Service
+ユースケースを1つのトランザクション単位で実装
 
-## 🎨 主要な画面
-
-### 一覧画面 (`/todos`)
-- タスク一覧の表示
-- ステータスでの絞り込み
-- 完了/未完了の切り替え
-
-### 作成画面 (`/todos/create`)
-- 新規タスクの作成
-
-### 詳細画面 (`/todos/{id}`)
-- タスクの詳細情報
-- ステータス変更
-- 編集・削除
-
-### 編集画面 (`/todos/{id}/edit`)
-- タスク名の編集
-
+### 5. Dependency Injection
+Laravel Service Containerによる疎結合
 
 ## 📝 主要なコマンド
 
 ```bash
-# データベース
-php artisan migrate              # マイグレーション実行
-php artisan migrate:fresh        # データベースリセット
-php artisan db:show             # データベース情報表示
-
-# ルーティング
-php artisan route:list          # ルート一覧
-php artisan route:cache         # ルートキャッシュ
-
-# 開発サーバー
-php artisan serve               # 開発サーバー起動
-php artisan serve --port=8080   # ポート指定
+# マイグレーション
+php artisan migrate
+php artisan migrate:fresh  # 全テーブル削除して再作成
 
 # テスト
-php artisan test                # テスト実行
+php artisan test
+php artisan test --filter TodoControllerTest
+
+# キャッシュクリア
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# コード生成
+php artisan make:migration CreateXxxTable
+php artisan make:model XxxModel
+php artisan make:controller XxxController
 ```
 
-## 🤝 貢献
+## 🎯 今後の拡張案
 
-バグ報告や機能リクエストは、Issuesページでお願いします。
+- [ ] Todo に期限（deadline）追加
+- [ ] TodoをProjectで分類
+- [ ] Todoへのタグ付け機能
+- [ ] TodoのソートとフィルタリングUI
+- [ ] API化（Laravel Sanctum）
+- [ ] Event Sourcing導入
+- [ ] CQRS パターン適用
+
+## 📚 参考資料
+
+- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)
+- [Laravel Documentation](https://laravel.com/docs)
+- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
 ## 📄 ライセンス
 
-このプロジェクトは[MIT License](https://opensource.org/licenses/MIT)のもとで公開されています。
+MIT License
 
 ---
 
-**開発者**: Tomohiro Hagino  
-**最終更新**: 2025年10月20日
+Made with ❤️ using Laravel & DDD
