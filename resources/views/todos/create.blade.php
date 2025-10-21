@@ -1,51 +1,36 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('新しいタスク') }}
+        </h2>
+    </x-slot>
 
-@section('title', 'Todo作成')
+    <div class="py-12">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <form method="POST" action="{{ route('todos.store') }}">
+                        @csrf
 
-@push('styles')
-<style>
-    {!! file_get_contents(resource_path('css/todos/common.css')) !!}
-</style>
-@endpush
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <x-input-label for="title" :value="__('タスク名')" />
+                            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title')" required autofocus />
+                            <x-input-error class="mt-2" :messages="$errors->get('title')" />
+                        </div>
 
-@section('content')
-<div class="page-header">
-    <h1 class="page-header__title">➕ 新しいタスクを作成</h1>
-    <p class="page-header__description">タスクの詳細を入力してください</p>
-</div>
-
-<div class="card">
-    <div class="card__body">
-        <form action="{{ route('todos.store') }}" method="POST">
-            @csrf
-            
-            <div class="form-group">
-                <label for="title" class="form-label form-label--required">タスク名</label>
-                <input 
-                    type="text" 
-                    id="title" 
-                    name="title" 
-                    class="form-input {{ $errors->has('title') ? 'form-input--error' : '' }}"
-                    placeholder="例: 買い物に行く"
-                    value="{{ old('title') }}"
-                    autofocus
-                >
-                @error('title')
-                    <p class="form-error">{{ $message }}</p>
-                @enderror
-                <p class="form-help">255文字以内で入力してください</p>
+                        <!-- Buttons -->
+                        <div class="flex items-center justify-end space-x-4 mt-6">
+                            <a href="{{ route('todos.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                                キャンセル
+                            </a>
+                            <x-primary-button>
+                                {{ __('作成') }}
+                            </x-primary-button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            
-            <div class="btn-group">
-                <button type="submit" class="btn btn--primary btn--large">
-                    ✓ 作成する
-                </button>
-                <a href="{{ route('todos.index') }}" class="btn btn--outline btn--large">
-                    キャンセル
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-@endsection
-
+</x-app-layout>
