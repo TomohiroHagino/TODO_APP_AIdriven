@@ -108,6 +108,25 @@ User (Aggregate Root)
 - TodoへのすべてのCRUD操作はUser経由で行う
 - User削除時にTodoも自動削除される（Cascade）
 
+```mermaid
+graph TD
+  %% バウンデッドコンテキストを表すクラスタ
+  subgraph BC["Todo管理コンテキスト (バウンデッドコンテキスト)"]
+    %% アグリゲートを表すクラスタ
+    subgraph AG["ユーザー集約 (Aggregate Root)"]
+      UserEntity["UserEntity\n（ユーザーエンティティ）"]
+      TodoEntity["TodoEntity\n（Todoエンティティ）"]
+    end
+    UserEntity -->|所有| TodoEntity
+  end
+
+  %% ドメインモデルの外にある認証機能
+  Auth["認証機能（Devise など）"]
+
+  %% 認証はドメインモデル外からUserEntityに作用することを示す点線矢印
+  Auth -.->|ログイン/ログアウト| UserEntity
+```
+
 ### ディレクトリ構造
 
 ```
