@@ -2,45 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Application\Todo\Service\CreateTodoService;
-use App\Application\Todo\Service\DeleteTodoService;
-use App\Application\Todo\Service\GetTodoDetailService;
-use App\Application\Todo\Service\ListTodosService;
-use App\Application\Todo\Service\ToggleTodoStatusService;
-use App\Application\Todo\Service\UpdateTodoService;
+use App\Application\UserAggregate\Service\AddTodoToUserService;
+use App\Application\UserAggregate\Service\DeleteTodoOfUserService;
+use App\Application\UserAggregate\Service\GetUserTodosService;
+use App\Application\UserAggregate\Service\ToggleTodoStatusService;
+use App\Application\UserAggregate\Service\UpdateTodoOfUserService;
 use App\Http\Requests\StoreTodoRequest;
 use App\Http\Requests\UpdateTodoRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Todoコントローラー
- * ユースケース（アプリケーションサービス）を呼び出してビューやリダイレクトを返す
+ * Todoコントローラー（User Aggregate対応）
+ * 
+ * 認証ユーザーのTodoを管理
+ * ユースケース（Application Service）を呼び出してビューやリダイレクトを返す
  */
 class TodoController extends Controller
 {
-    private ListTodosService $listTodosService;
-    private CreateTodoService $createTodoService;
-    private GetTodoDetailService $getTodoDetailService;
-    private UpdateTodoService $updateTodoService;
+    private GetUserTodosService $getUserTodosService;
+    private AddTodoToUserService $addTodoToUserService;
+    private UpdateTodoOfUserService $updateTodoOfUserService;
     private ToggleTodoStatusService $toggleTodoStatusService;
-    private DeleteTodoService $deleteTodoService;
+    private DeleteTodoOfUserService $deleteTodoOfUserService;
 
     public function __construct(
-        ListTodosService $listTodosService,
-        CreateTodoService $createTodoService,
-        GetTodoDetailService $getTodoDetailService,
-        UpdateTodoService $updateTodoService,
+        GetUserTodosService $getUserTodosService,
+        AddTodoToUserService $addTodoToUserService,
+        UpdateTodoOfUserService $updateTodoOfUserService,
         ToggleTodoStatusService $toggleTodoStatusService,
-        DeleteTodoService $deleteTodoService
+        DeleteTodoOfUserService $deleteTodoOfUserService
     ) {
-        $this->listTodosService = $listTodosService;
-        $this->createTodoService = $createTodoService;
-        $this->getTodoDetailService = $getTodoDetailService;
-        $this->updateTodoService = $updateTodoService;
+        // 認証ミドルウェアを適用
+        $this->middleware('auth');
+        
+        $this->getUserTodosService = $getUserTodosService;
+        $this->addTodoToUserService = $addTodoToUserService;
+        $this->updateTodoOfUserService = $updateTodoOfUserService;
         $this->toggleTodoStatusService = $toggleTodoStatusService;
-        $this->deleteTodoService = $deleteTodoService;
+        $this->deleteTodoOfUserService = $deleteTodoOfUserService;
     }
 
     /**
@@ -51,20 +52,25 @@ class TodoController extends Controller
      */
     public function index(Request $request): View
     {
-        $status = $request->query('status'); // 'done', 'pending', または null
-        
-        if ($status === 'done') {
-            $todos = $this->listTodosService->handleByStatus(true);
-        } elseif ($status === 'pending') {
-            $todos = $this->listTodosService->handleByStatus(false);
-        } else {
-            $todos = $this->listTodosService->handle();
-        }
+        $userId = auth()->id();
+        $status = $request->query('status');
 
-        return view('todos.index', [
-            'todos' => $todos,
-            'currentStatus' => $status,
-        ]);
+        try {
+            if ($status === 'done') {
+                $todos = $this->getUserTodosService->handleByStatus($userId, true);
+            } elseif ($status === 'pending') {
+                $todos = $this->getUserTodosService->handleByStatus($userId, false);
+            } else {
+                $todos = $this->getUserTodosService->handle($userId);
+            }
+
+            return view('todos.index', [
+                'todos' => $todos,
+                'currentStatus' => $status,
+            ]);
+        } catch (\RuntimeException $e) {
+            abort(500, $e->getMessage());
+        }
     }
 
     /**
@@ -85,14 +91,18 @@ class TodoController extends Controller
      */
     public function store(StoreTodoRequest $request): RedirectResponse
     {
+        $userId = auth()->id();
+
         try {
-            $this->createTodoService->handle($request->getTitle());
+            $this->addTodoToUserService->handle($userId, $request->getTitle());
             return redirect()->route('todos.index')
                 ->with('success', 'タスクを作成しました');
         } catch (\InvalidArgumentException $e) {
             return back()
                 ->withInput()
                 ->withErrors(['title' => $e->getMessage()]);
+        } catch (\RuntimeException $e) {
+            abort(500, $e->getMessage());
         }
     }
 
@@ -104,15 +114,28 @@ class TodoController extends Controller
      */
     public function show(int $id): View
     {
-        $todo = $this->getTodoDetailService->handle($id);
+        $userId = auth()->id();
 
-        if (!$todo) {
-            abort(404, 'タスクが見つかりませんでした');
+        try {
+            $todos = $this->getUserTodosService->handle($userId);
+            
+            // 該当するTodoを検索
+            $todo = null;
+            foreach ($todos as $t) {
+                if ($t->getId()->getValue() === $id) {
+                    $todo = $t;
+                    break;
+                }
+            }
+
+            if (!$todo) {
+                abort(404, 'Todoが見つかりません');
+            }
+
+            return view('todos.show', ['todo' => $todo]);
+        } catch (\RuntimeException $e) {
+            abort(500, $e->getMessage());
         }
-
-        return view('todos.show', [
-            'todo' => $todo,
-        ]);
     }
 
     /**
@@ -123,15 +146,28 @@ class TodoController extends Controller
      */
     public function edit(int $id): View
     {
-        $todo = $this->getTodoDetailService->handle($id);
+        $userId = auth()->id();
 
-        if (!$todo) {
-            abort(404, 'タスクが見つかりませんでした');
+        try {
+            $todos = $this->getUserTodosService->handle($userId);
+            
+            // 該当するTodoを検索
+            $todo = null;
+            foreach ($todos as $t) {
+                if ($t->getId()->getValue() === $id) {
+                    $todo = $t;
+                    break;
+                }
+            }
+
+            if (!$todo) {
+                abort(404, 'Todoが見つかりません');
+            }
+
+            return view('todos.edit', ['todo' => $todo]);
+        } catch (\RuntimeException $e) {
+            abort(500, $e->getMessage());
         }
-
-        return view('todos.edit', [
-            'todo' => $todo,
-        ]);
     }
 
     /**
@@ -143,12 +179,17 @@ class TodoController extends Controller
      */
     public function update(UpdateTodoRequest $request, int $id): RedirectResponse
     {
+        $userId = auth()->id();
+
         try {
-            $this->updateTodoService->handle($id, $request->getTitle());
+            $this->updateTodoOfUserService->handle($userId, $id, $request->getTitle());
             return redirect()->route('todos.show', $id)
                 ->with('success', 'タスクを更新しました');
         } catch (\RuntimeException $e) {
-            abort(404, $e->getMessage());
+            if (str_contains($e->getMessage(), '見つかりません')) {
+                abort(404, $e->getMessage());
+            }
+            abort(500, $e->getMessage());
         } catch (\InvalidArgumentException $e) {
             return back()
                 ->withInput()
@@ -164,27 +205,35 @@ class TodoController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->deleteTodoService->handle($id);
-        
-        return redirect()->route('todos.index')
-            ->with('success', 'タスクを削除しました');
+        $userId = auth()->id();
+
+        try {
+            $this->deleteTodoOfUserService->handle($userId, $id);
+            return redirect()->route('todos.index')
+                ->with('success', 'タスクを削除しました');
+        } catch (\RuntimeException $e) {
+            abort(500, $e->getMessage());
+        }
     }
 
     /**
-     * Todoの完了/未完了状態を切り替え
+     * Todoのステータスを切り替え
      *
      * @param int $id
      * @return RedirectResponse
      */
     public function toggle(int $id): RedirectResponse
     {
+        $userId = auth()->id();
+
         try {
-            $this->toggleTodoStatusService->handle($id);
-            return redirect()->route('todos.index')
-                ->with('success', 'タスクの状態を変更しました');
+            $this->toggleTodoStatusService->handle($userId, $id);
+            return back()->with('success', 'ステータスを更新しました');
         } catch (\RuntimeException $e) {
-            abort(404, $e->getMessage());
+            if (str_contains($e->getMessage(), '見つかりません')) {
+                abort(404, $e->getMessage());
+            }
+            abort(500, $e->getMessage());
         }
     }
 }
-
