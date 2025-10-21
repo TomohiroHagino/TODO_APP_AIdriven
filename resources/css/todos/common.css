@@ -17,12 +17,75 @@ body {
     padding: 2rem 1rem;
 }
 
-.layout__header {
-    background-color: white;
-    padding: 1.5rem 2rem;
+/* ============================================
+   Header
+   ============================================ */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.header__logo-link {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.header__logo-link:hover {
+    opacity: 0.9;
+}
+
+.header__nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.header__nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.header__nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.header__nav-link--active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.header__user {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0.5rem;
+}
+
+.header__divider {
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    height: 24px;
+    margin: 0 0.5rem;
 }
 
 .layout__title {
@@ -146,11 +209,11 @@ body {
     color: #991b1b;
 }
 
-/* ナビゲーション */
+/* ナビゲーション（その他のページ用） */
 .nav {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    align-items: center;
 }
 
 .nav__link {
@@ -159,6 +222,7 @@ body {
     color: #6b7280;
     border-radius: 6px;
     transition: all 0.2s;
+    font-weight: 500;
 }
 
 .nav__link:hover {
