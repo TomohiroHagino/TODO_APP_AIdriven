@@ -3,7 +3,16 @@
         <h1 class="header__logo">
             <a href="{{ route('todos.index') }}" class="header__logo-link">📝 Todo App</a>
         </h1>
-        <nav class="header__nav">
+
+        <!-- ハンバーガーメニューボタン（モバイル） -->
+        <button class="header__menu-toggle" id="menuToggle" aria-label="メニューを開く">
+            <span class="header__menu-icon"></span>
+            <span class="header__menu-icon"></span>
+            <span class="header__menu-icon"></span>
+        </button>
+
+        <!-- ナビゲーション -->
+        <nav class="header__nav" id="headerNav">
             @auth
                 <a href="{{ route('todos.index') }}" class="header__nav-link {{ request()->routeIs('todos.*') ? 'header__nav-link--active' : '' }}">
                     📋 Todos

@@ -90,6 +90,141 @@
     margin: 0 0.5rem;
 }
 
+/* ハンバーガーメニューボタン */
+.header__menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.header__menu-icon {
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* ハンバーガーメニューが開いている時のアニメーション */
+.header__menu-toggle--open .header__menu-icon:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.header__menu-toggle--open .header__menu-icon:nth-child(2) {
+    opacity: 0;
+}
+
+.header__menu-toggle--open .header__menu-icon:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* レスポンシブデザイン: タブレット以下 */
+@media (max-width: 768px) {
+    .header__container {
+        padding: 1rem 1.5rem;
+        position: relative;
+    }
+
+    .header__logo {
+        font-size: 1.5rem;
+    }
+
+    /* ハンバーガーメニューボタンを表示 */
+    .header__menu-toggle {
+        display: flex;
+    }
+
+    /* ナビゲーションをモバイル用に変更 */
+    .header__nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-direction: column;
+        gap: 0;
+        padding: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    /* メニューが開いている時 */
+    .header__nav--open {
+        max-height: 500px;
+        opacity: 1;
+        padding: 1rem 0;
+    }
+
+    .header__nav-link {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    .header__nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .header__nav-link--active {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .header__divider {
+        display: none;
+    }
+
+    .header__user {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin: 0.5rem 0;
+    }
+
+    .header__nav form {
+        display: block !important;
+        padding: 0 1.5rem;
+    }
+
+    .header__nav form button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* レスポンシブデザイン: スマートフォン */
+@media (max-width: 480px) {
+    .header__container {
+        padding: 1rem;
+    }
+
+    .header__logo {
+        font-size: 1.25rem;
+    }
+
+    .header__nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .header__user {
+        padding: 0.75rem 1rem;
+    }
+
+    .header__nav form {
+        padding: 0 1rem;
+    }
+}
+
 .layout__title {
     font-size: 1.875rem;
     font-weight: 700;

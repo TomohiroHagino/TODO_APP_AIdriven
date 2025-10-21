@@ -19,7 +19,8 @@ export default defineConfig({
                 'resources/css/todos/edit.css',
                 
                 // JavaScript
-                'resources/js/app.js'
+                'resources/js/app.js',
+                'resources/js/common.js'
             ],
             refresh: true,
         }),

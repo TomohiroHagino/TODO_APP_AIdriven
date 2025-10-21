@@ -13,7 +13,7 @@
     @stack('styles')
     
     <!-- JavaScript -->
-    @vite(['resources/js/app.js'])
+    @vite(['resources/js/app.js', 'resources/js/common.js'])
 </head>
 <body class="layout-with-grid">
     <!-- Header Component -->
