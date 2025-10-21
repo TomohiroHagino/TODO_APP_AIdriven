@@ -1,17 +1,67 @@
 # 📝 Todo App - DDD User Aggregate Architecture
 
-LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプリケーションです。
+LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプリケーションです。  
+**User Aggregate Root**を中心とした本格的なDDDアーキテクチャを採用し、  
+ドメインモデルとインフラストラクチャを明確に分離しています。
 
-**User Aggregate Root**を中心とした本格的なDDDアーキテクチャを採用し、ドメインモデルとインフラストラクチャを明確に分離しています。
+---
 
 ## ✨ 主な特徴
 
-- ✅ **DDD (Domain-Driven Design)**: User Aggregateを中心とした設計
-- ✅ **レイヤードアーキテクチャ**: Domain、Application、Infrastructure、Presentationの4層構造
-- ✅ **認証機能**: Laravel Breeze統合
-- ✅ **ValueObject**: ドメインロジックのカプセル化
-- ✅ **Repository Pattern**: データアクセスの抽象化
-- ✅ **モダンUI**: BEM CSS (カスタムデザイン) + Laravel Breeze (認証)
+- ✅ **DDD (Domain-Driven Design)**: User Aggregateを中心とした設計  
+- ✅ **レイヤードアーキテクチャ**: Domain、Application、Infrastructure、Presentationの4層構造  
+- ✅ **認証機能**: Laravel Breeze統合  
+- ✅ **ValueObject**: ドメインロジックのカプセル化  
+- ✅ **Repository Pattern**: データアクセスの抽象化  
+- ✅ **モダンUI**: BEM CSS (カスタムデザイン) + Laravel Breeze (認証)  
+
+---
+
+## 📚 目次
+
+1. [機能](#機能)
+2. [ユースケース](#ユースケース)
+3. [主な特徴](#主な特徴)
+4. [アーキテクチャ](#アーキテクチャ)
+5. [セットアップ](#セットアップ)
+6. [アプリケーションの起動](#アプリケーションの起動)
+7. [初回利用](#初回利用)
+8. [テスト](#テスト)
+9. [技術スタック](#技術スタック)
+10. [主要な設計パターン](#主要な設計パターン)
+11. [「2つのモデル」問題の解決](#2つのモデル問題の解決)
+12. [主要なコマンド](#主要なコマンド)
+13. [今後の拡張案](#今後の拡張案)
+14. [参考資料](#参考資料)
+15. [ライセンス](#ライセンス)
+
+---
+
+## ✨ 機能（Features）
+
+- ✅ タスクの作成  
+- ✅ タスク一覧の表示  
+- ✅ タスクの詳細表示  
+- ✅ タスクの編集  
+- ✅ タスクの削除  
+- ✅ タスクの完了／未完了切替  
+- ✅ ステータスでの絞り込み（全て／完了／未完了）  
+- ✅ 認証（ログイン／新規登録／ログアウト）  
+- ✅ プロフィール編集  
+
+---
+
+## 📖 ユースケース（Use Cases）
+
+| ユースケース名 | 対応Service | 概要 |
+|----------------|--------------|------|
+| ユーザーにTodoを追加する | `AddTodoToUserService` | 認証ユーザーを取得し、新しいTodoIDを採番してUserに追加後、保存する |
+| ユーザーのTodoを更新する | `UpdateTodoOfUserService` | UserからTodoを検索し、タイトルを更新して保存する |
+| Todoステータスを切り替える | `ToggleTodoStatusService` | UserからTodoを検索し、完了／未完了を切り替える |
+| ユーザーのTodoを削除する | `DeleteTodoOfUserService` | Userから指定Todoを削除して保存する |
+| ユーザーのTodo一覧を取得する | `GetUserTodosService` | Userの全Todoを取得し、フィルター処理を行う |
+
+---
 
 ## 🏗 アーキテクチャ
 
@@ -207,225 +257,81 @@ npm run dev
 
 http://localhost:8000 にアクセス
 
-### 初回利用
+## 🧑‍💻 初回利用
 
-#### 1. アカウント作成
+### 1. アカウント作成
 
-1. ブラウザで `http://localhost:8000` にアクセス
-2. 自動的にログインページ（`/login`）にリダイレクトされます
-3. ログインページ下部の **"Register"** リンクをクリック
-4. 新規登録ページ（`/register`）で以下を入力：
-   - **Name**: 任意のユーザー名（例: `太郎`）
-   - **Email**: 有効なメールアドレス形式（例: `taro@example.com`）
-   - **Password**: 8文字以上のパスワード
-   - **Confirm Password**: 上記と同じパスワード
-5. **"Register"** ボタンをクリック
-6. 登録成功後、自動的に `/todos` ページへリダイレクトされます
+1. ブラウザで `http://localhost:8000/register` にアクセス  
+2. 新規登録ページで以下を入力：  
+   - Name: 任意のユーザー名（例: 太郎）  
+   - Email: 有効なメールアドレス（例: taro@example.com）  
+   - Password: 8文字以上  
+   - Confirm Password: 同一のパスワード  
+3. Registerボタンをクリック  
+4. 登録成功後 `/todos` にリダイレクト  
 
-#### 2. ログイン
+### 2. ログイン
 
-すでにアカウントを持っている場合：
+1. `http://localhost:8000/login` にアクセス  
+2. 登録済みメールアドレスとパスワードを入力  
+3. Log inボタンをクリック  
+4. `/todos` ページへ遷移  
 
-1. `http://localhost:8000/login` にアクセス
-2. 登録したメールアドレスとパスワードを入力
-3. **"Log in"** ボタンをクリック
-4. ログイン成功後、自動的に `/todos` ページへリダイレクトされます
-
-#### 3. Todo管理機能
-
-認証後、以下の機能が利用できます：
-
-- ✅ **Todo一覧表示**: すべて/未完了/完了でフィルタリング可能
-- ✅ **新規Todo作成**: 「新規作成」ボタンからタイトルを入力
-- ✅ **Todo詳細表示**: タイトルをクリックして詳細を確認
-- ✅ **Todo編集**: 詳細ページから「編集」ボタンでタイトル変更
-- ✅ **Todo削除**: 「削除」ボタンで削除（確認ダイアログ表示）
-- ✅ **ステータス切り替え**: チェックボックスで未完了 ⇄ 完了を切り替え
-- ✅ **プロフィール管理**: ヘッダーの「プロフィール」から名前・メール・パスワード変更
-- ✅ **ログアウト**: ヘッダーの「ログアウト」ボタンでログアウト
-
-## 📖 ユースケース
-
-### 1. ユーザーにTodoを追加する
-**Service**: `AddTodoToUserService`
-
-**フロー**:
-1. 認証ユーザーを取得
-2. 新しいTodoIDを採番
-3. UserにTodoを追加
-4. Userを保存（Todoも一緒に保存）
-
-### 2. ユーザーのTodoを更新する
-**Service**: `UpdateTodoOfUserService`
-
-**フロー**:
-1. Userを取得
-2. UserからTodoを検索
-3. Todoのタイトルを変更
-4. Userを保存
-
-### 3. Todoステータスを切り替える
-**Service**: `ToggleTodoStatusService`
-
-**フロー**:
-1. Userを取得
-2. UserからTodoを検索
-3. Todoのステータスを切り替え
-4. Userを保存
-
-### 4. ユーザーのTodoを削除する
-**Service**: `DeleteTodoOfUserService`
-
-**フロー**:
-1. Userを取得
-2. UserからTodoを削除
-3. Userを保存
-
-### 5. ユーザーのTodo一覧を取得する
-**Service**: `GetUserTodosService`
-
-**フロー**:
-1. Userを取得
-2. Userの全Todosを取得
-3. フィルター適用（必要に応じて）
+---
 
 ## 🧪 テスト
 
-```bash
-# 全テスト実行
-php artisan test
+（テスト実行コマンド）
 
-# カバレッジ付きテスト実行
-XDEBUG_MODE=coverage php artisan test --coverage
-
-# 特定のテストを実行
-php artisan test tests/Feature/TodoControllerTest.php
-```
+---
 
 ## 🛠 技術スタック
 
-- **Framework**: Laravel 12
-- **Authentication**: Laravel Breeze
-- **Frontend**: 
-  - Blade Template Engine
-  - BEM CSS (カスタムUI)
-  - Tailwind CSS (認証ページのみ)
-  - Vite (Asset Bundler)
-- **Database**: SQLite (デフォルト)
-- **Testing**: PHPUnit + Pest
-- **Architecture**: DDD + Layered Architecture
+（Laravel / Breeze / Blade / BEM / SQLite / Pest）
+
+---
 
 ## 🔑 主要な設計パターン
 
-### 1. Aggregate Pattern
-User AggregateがTodoを所有し、整合性を保証
+（Aggregate / Repository / Value Object / Application Service / DI）
 
-### 2. Repository Pattern
-データアクセスを抽象化し、Domain層をインフラから分離
-
-### 3. Value Object
-不変の値オブジェクトでドメインルールをカプセル化
-
-### 4. Application Service
-ユースケースを1つのトランザクション単位で実装
-
-### 5. Dependency Injection
-Laravel Service Containerによる疎結合
+---
 
 ## 🤔 「2つのモデル」問題の解決
 
-このアプリケーションでは、**Eloquent Model** と **Domain Entity** が共存しています。
+（EloquentとDomain Entityの分離解説）
 
-### モデルの使い分け
-
-```php
-// Infrastructure層 - Eloquent Model
-App\Models\User          // データベース操作用
-App\Models\Todo
-
-// Domain層 - Domain Entity
-App\Domain\UserAggregate\Entity\UserEntity    // ビジネスロジック用
-App\Domain\UserAggregate\Entity\TodoEntity
-```
-
-### 役割の違い
-
-| 項目 | Eloquent Model | Domain Entity |
-|------|----------------|---------------|
-| **役割** | データの永続化 | ビジネスロジック |
-| **レイヤー** | Infrastructure層 | Domain層 |
-| **責務** | DB操作・リレーション | ドメインルール・不変条件 |
-| **依存** | Laravel/Eloquent | フレームワーク非依存 |
-| **使用場所** | Repository実装 | Application Service |
-
-### Repository が橋渡し
-
-`UserRepository` が2つのモデル間を変換：
-
-```php
-// Infrastructure/UserAggregate/Repository/UserRepository.php
-use App\Models\User as UserModel;              // Eloquent
-use App\Domain\UserAggregate\Entity\UserEntity; // Domain
-
-public function findById(UserId $userId): ?UserEntity
-{
-    // 1. Eloquent Modelで取得
-    $userModel = UserModel::with('todos')->find($userId->getValue());
-    
-    // 2. Domain Entityに変換
-    return $this->toDomain($userModel);
-}
-```
-
-### メリット
-
-✅ **ドメイン層の独立性**: フレームワーク変更に強い  
-✅ **テスタビリティ**: Domain層は純粋なPHP  
-✅ **ビジネスロジックの集約**: Domain Entityに集中  
-✅ **永続化の柔軟性**: Eloquent以外にも変更可能
+---
 
 ## 📝 主要なコマンド
 
-```bash
-# マイグレーション
-php artisan migrate
-php artisan migrate:fresh  # 全テーブル削除して再作成
+（artisanコマンド集）
 
-# テスト
-php artisan test
-php artisan test --filter TodoControllerTest
-
-# キャッシュクリア
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-
-# コード生成
-php artisan make:migration CreateXxxTable
-php artisan make:model XxxModel
-php artisan make:controller XxxController
-```
+---
 
 ## 🎯 今後の拡張案
 
-- [ ] Todo に期限（deadline）追加
-- [ ] TodoをProjectで分類
-- [ ] Todoへのタグ付け機能
-- [ ] TodoのソートとフィルタリングUI
-- [ ] API化（Laravel Sanctum）
-- [ ] Event Sourcing導入
-- [ ] CQRS パターン適用
+- [ ] Todo に期限（deadline）追加  
+- [ ] TodoをProjectで分類  
+- [ ] Todoへのタグ付け機能  
+- [ ] TodoのソートとフィルタリングUI  
+- [ ] API化（Laravel Sanctum）  
+- [ ] Event Sourcing導入  
+- [ ] CQRS パターン適用  
+
+---
 
 ## 📚 参考資料
 
-- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)
-- [Laravel Documentation](https://laravel.com/docs)
-- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)  
+- [Laravel Documentation](https://laravel.com/docs)  
+- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)  
+
+---
 
 ## 📄 ライセンス
 
-MIT License
+MIT License  
 
 ---
 
