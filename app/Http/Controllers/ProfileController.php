@@ -2,15 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\UserAggregate\Service\DeleteUserAccountService;
+use App\Application\UserAggregate\Service\UpdateUserPasswordService;
+use App\Application\UserAggregate\Service\UpdateUserProfileService;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use RuntimeException;
 
+/**
+ * プロフィール管理コントローラー（DDD化済み）
+ * 
+ * Application Serviceを通じてUser Aggregateを操作
+ */
 class ProfileController extends Controller
 {
+    private UpdateUserProfileService $updateProfileService;
+    private UpdateUserPasswordService $updatePasswordService;
+    private DeleteUserAccountService $deleteAccountService;
+
+    public function __construct(
+        UpdateUserProfileService $updateProfileService,
+        UpdateUserPasswordService $updatePasswordService,
+        DeleteUserAccountService $deleteAccountService
+    ) {
+        $this->updateProfileService = $updateProfileService;
+        $this->updatePasswordService = $updatePasswordService;
+        $this->deleteAccountService = $deleteAccountService;
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -26,19 +49,29 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        try {
+            $this->updateProfileService->handle(
+                $request->user()->id,
+                $request->validated('name'),
+                $request->validated('email')
+            );
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            // メールアドレスが変更された場合は検証をリセット
+            if ($request->user()->email !== $request->validated('email')) {
+                $request->user()->email_verified_at = null;
+                $request->user()->save();
+            }
+
+            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        } catch (RuntimeException $e) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['email' => $e->getMessage()]);
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
      * Delete the user's account.
+     * User削除時、所有するTodoも自動削除される（Cascade）
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -46,15 +79,22 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
+        $userId = $request->user()->id;
 
-        Auth::logout();
+        try {
+            // ログアウト処理
+            Auth::logout();
 
-        $user->delete();
+            // User Aggregate削除（Todoも一緒に削除される）
+            $this->deleteAccountService->handle($userId);
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+            return Redirect::to('/');
+        } catch (RuntimeException $e) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['error' => $e->getMessage()]);
+        }
     }
 }

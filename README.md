@@ -25,7 +25,7 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 4. [アーキテクチャ](#-アーキテクチャ)
 5. [セットアップ](#-セットアップ)
 6. [アプリケーションの起動](#-アプリケーションの起動)
-7. [初回利用](#初回利用)
+7. [初回利用](#-初回利用)
 8. [テスト](#-テスト)
 9. [技術スタック](#-技術スタック)
 10. [主要な設計パターン](#-主要な設計パターン)
@@ -53,6 +53,8 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 
 ## 📖 ユースケース
 
+### Todo管理
+
 | ユースケース名 | 対応Service | 概要 |
 |----------------|--------------|------|
 | ユーザーにTodoを追加する | `AddTodoToUserService` | 認証ユーザーを取得し、新しいTodoIDを採番してUserに追加後、保存する |
@@ -60,6 +62,14 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 | Todoステータスを切り替える | `ToggleTodoStatusService` | UserからTodoを検索し、完了／未完了を切り替える |
 | ユーザーのTodoを削除する | `DeleteTodoOfUserService` | Userから指定Todoを削除して保存する |
 | ユーザーのTodo一覧を取得する | `GetUserTodosService` | Userの全Todoを取得し、フィルター処理を行う |
+
+### プロフィール管理
+
+| ユースケース名 | 対応Service | 概要 |
+|----------------|--------------|------|
+| プロフィール情報を更新する | `UpdateUserProfileService` | ユーザーの名前とメールアドレスを更新する（メール重複チェック含む） |
+| パスワードを更新する | `UpdateUserPasswordService` | 現在のパスワードを検証後、新しいパスワードに変更する |
+| アカウントを削除する | `DeleteUserAccountService` | ユーザーアカウントを削除する（所有Todoも自動削除） |
 
 ---
 
@@ -126,7 +136,10 @@ app/
 │           ├── UpdateTodoOfUserService.php
 │           ├── ToggleTodoStatusService.php
 │           ├── DeleteTodoOfUserService.php
-│           └── GetUserTodosService.php
+│           ├── GetUserTodosService.php
+│           ├── UpdateUserProfileService.php     # プロフィール更新
+│           ├── UpdateUserPasswordService.php    # パスワード更新
+│           └── DeleteUserAccountService.php     # アカウント削除
 │
 ├── Infrastructure/                     # インフラ層
 │   └── UserAggregate/
@@ -135,10 +148,12 @@ app/
 │
 ├── Http/                               # プレゼンテーション層
 │   ├── Controllers/
-│   │   └── TodoController.php
+│   │   ├── TodoController.php
+│   │   └── ProfileController.php
 │   └── Requests/
 │       ├── StoreTodoRequest.php
-│       └── UpdateTodoRequest.php
+│       ├── UpdateTodoRequest.php
+│       └── ProfileUpdateRequest.php
 │
 └── Models/                             # Eloquent ORM
     ├── User.php                        # Eloquent Model (認証用)
