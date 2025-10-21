@@ -9,7 +9,7 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 ## ✨ 主な特徴
 
 - ✅ **DDD (Domain-Driven Design)**: User Aggregateを中心とした設計  
-- ✅ **レイヤードアーキテクチャ**: Domain、Application、Infrastructure、Presentationの4層構造  
+- ✅ **オニオンアーキテクチャ**: Domain、Application、Infrastructure、Presentationの4層構造  
 - ✅ **認証機能**: Laravel Breeze統合  
 - ✅ **ValueObject**: ドメインロジックのカプセル化  
 - ✅ **Repository Pattern**: データアクセスの抽象化  
