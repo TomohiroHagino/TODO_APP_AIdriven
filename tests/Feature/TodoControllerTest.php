@@ -103,7 +103,7 @@ class TodoControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get('/todos/create');
 
         $response->assertStatus(200);
-        $response->assertSee('タスク名');
+        $response->assertSee('タイトル');
     }
 
     public function test_store_creates_todo(): void

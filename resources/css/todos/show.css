@@ -1,0 +1,99 @@
+/* Todo詳細ページ */
+
+.todo-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.todo-detail__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.todo-detail__title-wrapper {
+    flex: 1;
+}
+
+.todo-detail__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.75rem 0;
+}
+
+.todo-detail__title--done {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.todo-detail__status {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 16px;
+}
+
+.todo-detail__status--pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.todo-detail__status--done {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.todo-detail__info {
+    background-color: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.todo-detail__info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.todo-detail__info-row:last-child {
+    border-bottom: none;
+}
+
+.todo-detail__info-label {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.todo-detail__info-value {
+    color: #1f2937;
+}
+
+.todo-detail__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.todo-detail__back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.todo-detail__back:hover {
+    color: #1f2937;
+}
+

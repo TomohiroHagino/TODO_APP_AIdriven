@@ -1,39 +1,49 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('タスク編集') }}
-        </h2>
-    </x-slot>
+@extends('layouts.todo')
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form method="POST" action="{{ route('todos.update', $todo->getId()->getValue()) }}">
-                        @csrf
-                        @method('PUT')
+@section('content')
+<div class="todo-form">
+    <a href="{{ route('todos.show', $todo->getId()->getValue()) }}" class="todo-form__back">
+        ← 詳細に戻る
+    </a>
 
-                        <!-- Title -->
-                        <div class="mb-4">
-                            <x-input-label for="title" :value="__('タスク名')" />
-                            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" 
-                                         :value="old('title', $todo->getTitle()->getValue())" required autofocus />
-                            <x-input-error class="mt-2" :messages="$errors->get('title')" />
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="flex items-center justify-end space-x-4 mt-6">
-                            <a href="{{ route('todos.show', $todo->getId()->getValue()) }}" 
-                               class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
-                                キャンセル
-                            </a>
-                            <x-primary-button>
-                                {{ __('更新') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <div class="todo-form__header">
+        <h2 class="todo-form__title">Todo編集</h2>
     </div>
-</x-app-layout>
+
+    <form method="POST" action="{{ route('todos.update', $todo->getId()->getValue()) }}" class="todo-form__body">
+        @csrf
+        @method('PUT')
+
+        <div class="form-group">
+            <label for="title" class="form-group__label">タイトル</label>
+            <input type="text" 
+                   id="title" 
+                   name="title" 
+                   class="form-group__input" 
+                   value="{{ old('title', $todo->getTitle()->getValue()) }}"
+                   required
+                   autofocus>
+            @error('title')
+                <div class="form-group__error">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="checkbox-group">
+            <label for="is_done" class="checkbox-group__label">
+                <input type="checkbox" 
+                       id="is_done" 
+                       name="is_done" 
+                       class="checkbox-group__input"
+                       value="1"
+                       {{ old('is_done', $todo->isDone()) ? 'checked' : '' }}>
+                <span class="checkbox-group__text">完了済み</span>
+            </label>
+        </div>
+
+        <div class="todo-form__actions">
+            <a href="{{ route('todos.show', $todo->getId()->getValue()) }}" class="btn btn--secondary">キャンセル</a>
+            <button type="submit" class="btn btn--primary">更新</button>
+        </div>
+    </form>
+</div>
+@endsection
