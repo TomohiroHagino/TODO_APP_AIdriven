@@ -21,6 +21,14 @@ class UserModel extends Authenticatable
     protected $table = 'users';
 
     /**
+     * ファクトリを作成
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

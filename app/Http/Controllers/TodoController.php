@@ -34,9 +34,6 @@ class TodoController extends Controller
         ToggleTodoStatusService $toggleTodoStatusService,
         DeleteTodoOfUserService $deleteTodoOfUserService
     ) {
-        // 認証ミドルウェアを適用
-        $this->middleware('auth');
-        
         $this->getUserTodosService = $getUserTodosService;
         $this->addTodoToUserService = $addTodoToUserService;
         $this->updateTodoOfUserService = $updateTodoOfUserService;
