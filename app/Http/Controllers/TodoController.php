@@ -8,6 +8,8 @@ use App\Application\Todo\Service\GetTodoDetailService;
 use App\Application\Todo\Service\ListTodosService;
 use App\Application\Todo\Service\ToggleTodoStatusService;
 use App\Application\Todo\Service\UpdateTodoService;
+use App\Http\Requests\StoreTodoRequest;
+use App\Http\Requests\UpdateTodoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -78,20 +80,13 @@ class TodoController extends Controller
     /**
      * 新しいTodoを保存
      *
-     * @param Request $request
+     * @param StoreTodoRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTodoRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-        ], [
-            'title.required' => 'タイトルは必須です',
-            'title.max' => 'タイトルは255文字以内で入力してください',
-        ]);
-
         try {
-            $this->createTodoService->handle($validated['title']);
+            $this->createTodoService->handle($request->getTitle());
             return redirect()->route('todos.index')
                 ->with('success', 'タスクを作成しました');
         } catch (\InvalidArgumentException $e) {
@@ -142,21 +137,14 @@ class TodoController extends Controller
     /**
      * Todoを更新
      *
-     * @param Request $request
+     * @param UpdateTodoRequest $request
      * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(UpdateTodoRequest $request, int $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-        ], [
-            'title.required' => 'タイトルは必須です',
-            'title.max' => 'タイトルは255文字以内で入力してください',
-        ]);
-
         try {
-            $this->updateTodoService->handle($id, $validated['title']);
+            $this->updateTodoService->handle($id, $request->getTitle());
             return redirect()->route('todos.show', $id)
                 ->with('success', 'タスクを更新しました');
         } catch (\RuntimeException $e) {

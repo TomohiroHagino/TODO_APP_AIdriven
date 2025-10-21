@@ -9,12 +9,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Log Channel
+    | デフォルトのログチャンネル
     |--------------------------------------------------------------------------
     |
-    | This option defines the default log channel that is utilized to write
-    | messages to your logs. The value provided here should match one of
-    | the channels present in the list of "channels" configured below.
+    | このオプションでは、ログメッセージを書き込むために使用される
+    | デフォルトのログチャンネルを定義します。
+    | ここで指定した値は、下記「channels」設定リストに存在する
+    | チャンネル名のいずれかと一致している必要があります。
     |
     */
 
@@ -22,12 +23,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Deprecations Log Channel
+    | 非推奨機能のログチャンネル
     |--------------------------------------------------------------------------
     |
-    | This option controls the log channel that should be used to log warnings
-    | regarding deprecated PHP and library features. This allows you to get
-    | your application ready for upcoming major versions of dependencies.
+    | このオプションでは、PHPやライブラリの非推奨機能に関する警告を
+    | 記録するログチャンネルを制御します。
+    | これにより、依存関係の将来のメジャーバージョンに備えて
+    | アプリケーションの準備を行うことができます。
     |
     */
 
@@ -38,26 +40,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Log Channels
+    | ログチャンネル設定
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the log channels for your application. Laravel
-    | utilizes the Monolog PHP logging library, which includes a variety
-    | of powerful log handlers and formatters that you're free to use.
+    | ここでは、アプリケーションで使用するログチャンネルを設定します。
+    | Laravel は PHP の Monolog ライブラリを利用しており、
+    | 多彩で強力なハンドラーやフォーマッターを使用できます。
     |
-    | Available drivers: "single", "daily", "slack", "syslog",
-    |                    "errorlog", "monolog", "custom", "stack"
+    | 利用可能なドライバー:
+    | "single", "daily", "slack", "syslog",
+    | "errorlog", "monolog", "custom", "stack"
     |
     */
 
     'channels' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | スタックチャンネル
+        |--------------------------------------------------------------------------
+        | 複数のチャンネルをまとめて使用できる「スタック」ドライバです。
+        | ここで指定された複数チャンネルへ同時にログを送ります。
+        |
+        */
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | 単一ファイルログ
+        |--------------------------------------------------------------------------
+        | すべてのログを1つのファイル（laravel.log）に出力します。
+        |
+        */
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -65,14 +83,28 @@ return [
             'replace_placeholders' => true,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | 日次ローテーションログ
+        |--------------------------------------------------------------------------
+        | ログを毎日新しいファイルに出力し、古いファイルは一定期間後に削除します。
+        |
+        */
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'days' => env('LOG_DAILY_DAYS', 14), // 保存期間（日数）
             'replace_placeholders' => true,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Slack通知ログ
+        |--------------------------------------------------------------------------
+        | 指定したSlackチャンネルにエラーログを通知します。
+        |
+        */
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
@@ -82,6 +114,13 @@ return [
             'replace_placeholders' => true,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Papertrailログ
+        |--------------------------------------------------------------------------
+        | Papertrailなどの外部ログサービスにUDP経由で送信します。
+        |
+        */
         'papertrail' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -94,6 +133,13 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | 標準エラー出力（stderr）
+        |--------------------------------------------------------------------------
+        | コンソールやサーバーログに標準エラー出力として書き込みます。
+        |
+        */
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -105,6 +151,13 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | システムログ（syslog）
+        |--------------------------------------------------------------------------
+        | OSのシステムログ機能を利用してログを記録します。
+        |
+        */
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -112,17 +165,40 @@ return [
             'replace_placeholders' => true,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | PHPのエラーログ
+        |--------------------------------------------------------------------------
+        | PHPの error_log() 関数を利用してログを出力します。
+        |
+        */
         'errorlog' => [
             'driver' => 'errorlog',
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Nullハンドラ
+        |--------------------------------------------------------------------------
+        | すべてのログを無視（破棄）する設定です。
+        | テスト環境などで使用されます。
+        |
+        */
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | 緊急ログ
+        |--------------------------------------------------------------------------
+        | すべてのログチャンネルが利用できない場合に使用される
+        | フォールバック用の緊急ログです。
+        |
+        */
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

@@ -4,13 +4,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Mailer
+    | デフォルトのメーラー設定
     |--------------------------------------------------------------------------
     |
-    | This option controls the default mailer that is used to send all email
-    | messages unless another mailer is explicitly specified when sending
-    | the message. All additional mailers can be configured within the
-    | "mailers" array. Examples of each type of mailer are provided.
+    | このオプションでは、メール送信時にデフォルトで使用するメーラーを
+    | 定義します。特定のメーラーを明示的に指定しない限り、
+    | ここで設定したメーラーが使用されます。
+    |
+    | 追加のメーラー設定は、下記の "mailers" 配列内で定義できます。
+    | それぞれのメーラータイプの例も用意されています。
     |
     */
 
@@ -18,25 +20,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Mailer Configurations
+    | メーラーの設定
     |--------------------------------------------------------------------------
     |
-    | Here you may configure all of the mailers used by your application plus
-    | their respective settings. Several examples have been configured for
-    | you and you are free to add your own as your application requires.
+    | ここでは、アプリケーションで使用するすべてのメーラーと
+    | それぞれの設定を定義します。
+    | いくつかの例がすでに定義されていますが、
+    | 必要に応じて独自のメーラー設定を追加することも可能です。
     |
-    | Laravel supports a variety of mail "transport" drivers that can be used
-    | when delivering an email. You may specify which one you're using for
-    | your mailers below. You may also add additional mailers if needed.
+    | Laravel は、メール送信時に利用できる複数の
+    | 「トランスポート」ドライバをサポートしています。
+    | 使用したいドライバを下記で指定してください。
+    | さらに、複数のメーラーを定義して切り替えることも可能です。
     |
-    | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "resend", "log", "array",
-    |            "failover", "roundrobin"
+    | 利用可能なドライバ:
+    | "smtp", "sendmail", "mailgun", "ses", "ses-v2",
+    | "postmark", "resend", "log", "array",
+    | "failover", "roundrobin"
     |
     */
 
     'mailers' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | SMTP メーラー
+        |--------------------------------------------------------------------------
+        | 一般的な SMTP サーバーを通じてメールを送信します。
+        |
+        */
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),
@@ -49,10 +61,24 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Amazon SES メーラー
+        |--------------------------------------------------------------------------
+        | AWS Simple Email Service を利用してメールを送信します。
+        |
+        */
         'ses' => [
             'transport' => 'ses',
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Postmark メーラー
+        |--------------------------------------------------------------------------
+        | Postmark サービスを利用してメールを送信します。
+        |
+        */
         'postmark' => [
             'transport' => 'postmark',
             // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
@@ -61,33 +87,79 @@ return [
             // ],
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Resend メーラー
+        |--------------------------------------------------------------------------
+        | Resend サービスを利用してメールを送信します。
+        |
+        */
         'resend' => [
             'transport' => 'resend',
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Sendmail メーラー
+        |--------------------------------------------------------------------------
+        | サーバー上の Sendmail コマンドを利用してメールを送信します。
+        |
+        */
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | ログ メーラー
+        |--------------------------------------------------------------------------
+        | メール内容を実際に送信せず、ログに書き出します。
+        | テスト環境などで便利です。
+        |
+        */
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | 配列 メーラー
+        |--------------------------------------------------------------------------
+        | メールを送信せず、アプリケーション内で配列として保持します。
+        | 主にテスト用途に利用されます。
+        |
+        */
         'array' => [
             'transport' => 'array',
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | フェイルオーバー メーラー
+        |--------------------------------------------------------------------------
+        | 優先順位付きで複数のメーラーを順に試行します。
+        | 最初のメーラーが失敗した場合、次のメーラーで送信を試みます。
+        |
+        */
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
                 'smtp',
                 'log',
             ],
-            'retry_after' => 60,
+            'retry_after' => 60, // 再試行までの秒数
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | ラウンドロビン メーラー
+        |--------------------------------------------------------------------------
+        | 複数のメーラーを交互に使用して送信します。
+        | 負荷分散や冗長構成に利用できます。
+        |
+        */
         'roundrobin' => [
             'transport' => 'roundrobin',
             'mailers' => [
@@ -101,12 +173,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    | 送信元アドレス設定
     |--------------------------------------------------------------------------
     |
-    | You may wish for all emails sent by your application to be sent from
-    | the same address. Here you may specify a name and address that is
-    | used globally for all emails that are sent by your application.
+    | すべての送信メールで共通の送信元アドレスを設定できます。
+    | アプリケーション全体で同じアドレス・名前を使用したい場合に便利です。
     |
     */
 

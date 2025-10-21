@@ -4,12 +4,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Defaults
+    | 認証のデフォルト設定
     |--------------------------------------------------------------------------
     |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
+    | このオプションでは、アプリケーションのデフォルトの認証「ガード」と
+    | パスワードリセット「ブローカー」を定義します。
+    | 必要に応じて変更できますが、多くのアプリケーションでは
+    | このデフォルト設定で十分です。
     |
     */
 
@@ -20,18 +21,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Guards
+    | 認証ガード
     |--------------------------------------------------------------------------
     |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
+    | ここでは、アプリケーションの各認証ガードを定義します。
+    | もちろん、セッションストレージと Eloquent ユーザープロバイダを
+    | 利用する基本的な設定がデフォルトで定義されています。
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
+    | すべての認証ガードは「ユーザープロバイダ」を持ちます。
+    | これは、ユーザーがデータベースまたはその他のストレージから
+    | どのように取得されるかを定義するものです。
+    | 通常は Eloquent が使用されます。
     |
-    | Supported: "session"
+    | 対応ドライバ: "session"
     |
     */
 
@@ -44,18 +46,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | ユーザープロバイダ
     |--------------------------------------------------------------------------
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
+    | すべての認証ガードにはユーザープロバイダがあり、
+    | データベースやその他のストレージからユーザーを取得する方法を定義します。
+    | 通常は Eloquent が使用されます。
     |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
+    | 複数のユーザーテーブルやモデルを使用する場合は、
+    | モデルやテーブルを表す複数のプロバイダを設定できます。
+    | その後、必要に応じてそれらのプロバイダをガードに割り当てます。
     |
-    | Supported: "database", "eloquent"
+    | 対応ドライバ: "database", "eloquent"
     |
     */
 
@@ -73,20 +75,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Resetting Passwords
+    | パスワードリセット設定
     |--------------------------------------------------------------------------
     |
-    | These configuration options specify the behavior of Laravel's password
-    | reset functionality, including the table utilized for token storage
-    | and the user provider that is invoked to actually retrieve users.
+    | この設定は Laravel のパスワードリセット機能の動作を定義します。
+    | トークンを保存するテーブルや、ユーザーを取得するプロバイダを
+    | ここで指定します。
     |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
+    | expire は、各リセットトークンが有効とみなされる分数です。
+    | このセキュリティ機能により、トークンの有効期間が短くなり、
+    | 推測による不正使用を防ぎます。
     |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
+    | throttle は、ユーザーが次のパスワードリセットトークンを生成できるまでの
+    | 秒数を指定します。これにより大量トークンの連続生成を防ぎます。
     |
     */
 
@@ -94,19 +95,19 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
+            'expire' => 60, // トークンの有効期限（分）
+            'throttle' => 60, // トークン再発行までの待機時間（秒）
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
+    | パスワード確認タイムアウト
     |--------------------------------------------------------------------------
     |
-    | Here you may define the number of seconds before a password confirmation
-    | window expires and users are asked to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
+    | この値は、パスワード確認ウィンドウが有効な秒数を定義します。
+    | この時間を過ぎると、ユーザーは再度パスワードを入力するよう
+    | 求められます。デフォルトでは3時間（10800秒）です。
     |
     */
 

@@ -4,12 +4,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Queue Connection Name
+    | デフォルトのキュー接続名
     |--------------------------------------------------------------------------
     |
-    | Laravel's queue supports a variety of backends via a single, unified
-    | API, giving you convenient access to each backend using identical
-    | syntax for each. The default queue connection is defined below.
+    | Laravel のキュー機能は、統一された API を通じてさまざまな
+    | バックエンドをサポートしています。これにより、どのバックエンドでも
+    | 同じ構文で簡単にアクセスできます。
+    | ここではデフォルトで使用するキュー接続を指定します。
     |
     */
 
@@ -17,32 +18,56 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Queue Connections
+    | キュー接続設定
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the connection options for every queue backend
-    | used by your application. An example configuration is provided for
-    | each backend supported by Laravel. You're also free to add more.
+    | ここでは、アプリケーションで使用する各キューバックエンドの
+    | 接続オプションを設定します。
+    | Laravel がサポートしている各ドライバの例も用意されています。
+    | 必要に応じて独自の接続設定を追加することも可能です。
     |
-    | Drivers: "sync", "database", "beanstalkd", "sqs", "redis", "failover", "null"
+    | 使用可能なドライバ:
+    | "sync", "database", "beanstalkd", "sqs", "redis", "failover", "null"
     |
     */
 
     'connections' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | 同期ドライバ
+        |--------------------------------------------------------------------------
+        | キューを使用せず、すぐにジョブを実行します。
+        | テスト環境などで便利です。
+        |
+        */
         'sync' => [
             'driver' => 'sync',
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | データベースドライバ
+        |--------------------------------------------------------------------------
+        | ジョブをデータベースのテーブルに保存し、順次処理します。
+        |
+        */
         'database' => [
             'driver' => 'database',
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90), // 再試行までの時間（秒）
             'after_commit' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Beanstalkd ドライバ
+        |--------------------------------------------------------------------------
+        | 高速で軽量なキューサーバー Beanstalkd を使用します。
+        |
+        */
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),
@@ -52,6 +77,13 @@ return [
             'after_commit' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Amazon SQS ドライバ
+        |--------------------------------------------------------------------------
+        | AWS Simple Queue Service を利用してジョブを管理します。
+        |
+        */
         'sqs' => [
             'driver' => 'sqs',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -63,6 +95,13 @@ return [
             'after_commit' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Redis ドライバ
+        |--------------------------------------------------------------------------
+        | Redis を使用してジョブをキューに保存・管理します。
+        |
+        */
         'redis' => [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
@@ -72,6 +111,14 @@ return [
             'after_commit' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | フェイルオーバードライバ
+        |--------------------------------------------------------------------------
+        | 複数のキュー接続を定義し、最初の接続が失敗した場合に
+        | 次の接続にフォールバックします。
+        |
+        */
         'failover' => [
             'driver' => 'failover',
             'connections' => [
@@ -84,15 +131,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Job Batching
+    | ジョブバッチ設定
     |--------------------------------------------------------------------------
     |
-    | The following options configure the database and table that store job
-    | batching information. These options can be updated to any database
-    | connection and table which has been defined by your application.
+    | 以下の設定では、ジョブのバッチ処理に関する情報を保存する
+    | データベース接続とテーブル名を指定します。
+    | これらはアプリケーション内で定義された任意の接続・テーブルに変更可能です。
     |
     */
-
     'batching' => [
         'database' => env('DB_CONNECTION', 'sqlite'),
         'table' => 'job_batches',
@@ -100,17 +146,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Failed Queue Jobs
+    | 失敗したジョブの設定
     |--------------------------------------------------------------------------
     |
-    | These options configure the behavior of failed queue job logging so you
-    | can control how and where failed jobs are stored. Laravel ships with
-    | support for storing failed jobs in a simple file or in a database.
+    | この設定では、失敗したキュージョブの記録方法を制御します。
+    | Laravel では、失敗ジョブをファイルまたはデータベースに
+    | 保存する機能が標準で提供されています。
     |
-    | Supported drivers: "database-uuids", "dynamodb", "file", "null"
+    | 使用可能なドライバ:
+    | "database-uuids", "dynamodb", "file", "null"
     |
     */
-
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
         'database' => env('DB_CONNECTION', 'sqlite'),

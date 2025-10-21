@@ -4,30 +4,61 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Third Party Services
+    | 外部サービス設定
     |--------------------------------------------------------------------------
     |
-    | This file is for storing the credentials for third party services such
-    | as Mailgun, Postmark, AWS and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
+    | このファイルでは、Mailgun・Postmark・AWS などの
+    | 外部サービスの認証情報を管理します。
+    | このファイルは、こうした外部サービスの認証情報を
+    | 一元的・慣習的に格納するための場所として機能します。
+    | パッケージやライブラリが、これらの情報を探す際の
+    | 標準的な参照先として利用されます。
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Postmark 設定
+    |--------------------------------------------------------------------------
+    | Postmark メール送信サービスの認証トークンを指定します。
+    |
+    */
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Resend 設定
+    |--------------------------------------------------------------------------
+    | Resend メール送信サービスの API キーを指定します。
+    |
+    */
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Amazon SES 設定
+    |--------------------------------------------------------------------------
+    | AWS Simple Email Service (SES) の認証情報とリージョンを指定します。
+    |
+    */
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Slack 設定
+    |--------------------------------------------------------------------------
+    | Slack 通知用のボットトークンとデフォルトチャンネルを指定します。
+    | これにより、Laravel から Slack チャンネルへ通知を送信できます。
+    |
+    */
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
