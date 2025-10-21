@@ -117,8 +117,10 @@ app/
 │   │   ├── ValueObject/
 │   │   │   ├── Id.php                 # ID基底クラス
 │   │   │   └── DateTimeValue.php     # 日時値オブジェクト
-│   │   └── Exception/
-│   │       └── DomainException.php    # ドメイン例外基底
+│   │   ├── Exception/
+│   │   │   └── DomainException.php    # ドメイン例外基底
+│   │   └── Service/                   # 複数Aggregate間のドメインサービス
+│   │       └── README.md              # 配置ガイド（現在は未使用）
 │   │
 │   └── UserAggregate/                 # User集約
 │       ├── Entity/
@@ -131,8 +133,10 @@ app/
 │       │   ├── TodoId.php
 │       │   ├── TaskTitle.php
 │       │   └── TaskStatus.php
-│       └── Repository/
-│           └── UserRepositoryInterface.php
+│       ├── Repository/
+│       │   └── UserRepositoryInterface.php
+│       └── Service/                   # User Aggregate固有のドメインサービス
+│           └── README.md              # 配置ガイド（現在は未使用）
 │
 ├── Application/                        # アプリケーション層
 │   └── UserAggregate/
@@ -223,6 +227,34 @@ resources/
 - Application層はDomain層のみに依存
 - Infrastructure層はDomain層のインターフェースを実装
 - Presentation層はApplication層を呼び出す
+
+### Domain Service（ドメインサービス）
+
+現在このアプリケーションでは使用されていませんが、将来的に以下のようなケースで必要になる可能性があります：
+
+#### 📁 配置場所と用途
+
+1. **`Domain/{Aggregate}/Service/`** - Aggregate固有のドメインサービス
+   - ✅ **特定のAggregateに特化**したビジネスルール
+   - ✅ **Repositoryアクセスが必要**なドメインロジック
+   - ✅ **複数インスタンス間の操作**（同じAggregate型）
+   - 例: メールアドレス重複チェック、Todo移譲（User間）
+
+2. **`Domain/Shared/Service/`** - 汎用的なドメインサービス
+   - ✅ **どのAggregateでも使える汎用的な**ドメインロジック
+   - ✅ **異なる種類のAggregateをまたがる**処理
+   - 例: パスワードハッシュ化、異なるAggregate間の協調（UserとProject）
+
+#### 🆚 Domain Service vs Application Service
+
+| 項目 | Domain Service | Application Service |
+|------|----------------|---------------------|
+| **レイヤー** | Domain層 | Application層 |
+| **責務** | **ドメインロジック**（ビジネスルール） | **ユースケース**の実現（処理の流れ） |
+| **依存** | Repository Interface のみ | Domain + Infrastructure |
+| **再利用性** | 高い（複数箇所から利用） | 低い（1ユースケースに特化） |
+
+詳細は各Serviceディレクトリ内の `README.md` を参照してください。
 
 ## 🚀 セットアップ
 
@@ -348,7 +380,6 @@ Laravel Service Containerによる疎結合
 ---
 
 ## 🤔 「2つのモデル」問題の解決
-
 このアプリケーションでは、**Eloquent Model** と **Domain Entity** が共存しています。
 
 ---
