@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('styles')
+    @vite(['resources/css/todos/show.css'])
+@endpush
+
 @section('content')
 <div class="todo-detail">
     <a href="{{ route('todos.index') }}" class="todo-detail__back">

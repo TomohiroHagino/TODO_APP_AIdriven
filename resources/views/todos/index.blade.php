@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('styles')
+    @vite(['resources/css/todos/index.css'])
+@endpush
+
 @section('content')
 <div class="page-header">
     <h2 class="page-header__title">Todo一覧</h2>

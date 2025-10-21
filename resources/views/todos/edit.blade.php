@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('styles')
+    @vite(['resources/css/todos/edit.css'])
+@endpush
+
 @section('content')
 <div class="todo-form">
     <a href="{{ route('todos.show', $todo->getId()->getValue()) }}" class="todo-form__back">
