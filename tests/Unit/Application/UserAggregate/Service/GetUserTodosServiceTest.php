@@ -3,7 +3,7 @@
 namespace Tests\Unit\Application\UserAggregate\Service;
 
 use App\Application\UserAggregate\Service\GetUserTodosService;
-use App\Domain\UserAggregate\Entity\User;
+use App\Domain\UserAggregate\Entity\UserEntity;
 use App\Domain\UserAggregate\Repository\UserRepositoryInterface;
 use App\Domain\UserAggregate\ValueObject\Email;
 use App\Domain\UserAggregate\ValueObject\TaskTitle;
@@ -19,7 +19,7 @@ class GetUserTodosServiceTest extends TestCase
     {
         $repository = $this->createMock(UserRepositoryInterface::class);
         
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('Test User'),
             new Email('test@example.com'),
@@ -44,7 +44,7 @@ class GetUserTodosServiceTest extends TestCase
     {
         $repository = $this->createMock(UserRepositoryInterface::class);
         
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('Test User'),
             new Email('test@example.com'),
@@ -69,7 +69,7 @@ class GetUserTodosServiceTest extends TestCase
     {
         $repository = $this->createMock(UserRepositoryInterface::class);
         
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('Test User'),
             new Email('test@example.com'),

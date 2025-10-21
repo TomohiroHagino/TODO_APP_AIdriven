@@ -2,7 +2,7 @@
 
 namespace App\Application\UserAggregate\Service;
 
-use App\Domain\UserAggregate\Entity\Todo;
+use App\Domain\UserAggregate\Entity\TodoEntity;
 use App\Domain\UserAggregate\Repository\UserRepositoryInterface;
 use App\Domain\UserAggregate\ValueObject\UserId;
 use RuntimeException;

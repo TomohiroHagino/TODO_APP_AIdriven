@@ -3,7 +3,7 @@
 namespace Tests\Unit\Domain\UserAggregate\Entity;
 
 use App\Domain\Shared\ValueObject\DateTimeValue;
-use App\Domain\UserAggregate\Entity\User;
+use App\Domain\UserAggregate\Entity\UserEntity;
 use App\Domain\UserAggregate\ValueObject\Email;
 use App\Domain\UserAggregate\ValueObject\TaskTitle;
 use App\Domain\UserAggregate\ValueObject\TodoId;
@@ -20,7 +20,7 @@ class UserTest extends TestCase
         $email = new Email('test@example.com');
         $password = 'hashed_password';
 
-        $user = User::create($userId, $name, $email, $password);
+        $user = UserEntity::create($userId, $name, $email, $password);
 
         $this->assertEquals($userId, $user->getId());
         $this->assertEquals($name, $user->getName());
@@ -32,7 +32,7 @@ class UserTest extends TestCase
 
     public function test_add_todo(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -52,7 +52,7 @@ class UserTest extends TestCase
 
     public function test_find_todo(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -75,7 +75,7 @@ class UserTest extends TestCase
 
     public function test_remove_todo(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -99,7 +99,7 @@ class UserTest extends TestCase
 
     public function test_get_done_todos(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -120,7 +120,7 @@ class UserTest extends TestCase
 
     public function test_get_pending_todos(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -140,7 +140,7 @@ class UserTest extends TestCase
 
     public function test_change_name(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -155,7 +155,7 @@ class UserTest extends TestCase
 
     public function test_change_email(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),
@@ -170,7 +170,7 @@ class UserTest extends TestCase
 
     public function test_change_password(): void
     {
-        $user = User::create(
+        $user = UserEntity::create(
             new UserId(1),
             new UserName('山田太郎'),
             new Email('test@example.com'),

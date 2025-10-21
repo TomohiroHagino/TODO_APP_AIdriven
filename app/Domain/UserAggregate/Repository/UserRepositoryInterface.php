@@ -2,7 +2,7 @@
 
 namespace App\Domain\UserAggregate\Repository;
 
-use App\Domain\UserAggregate\Entity\User;
+use App\Domain\UserAggregate\Entity\UserEntity;
 use App\Domain\UserAggregate\ValueObject\Email;
 use App\Domain\UserAggregate\ValueObject\UserId;
 
@@ -24,35 +24,35 @@ interface UserRepositoryInterface
     public function nextTodoId(): int;
 
     /**
-     * Userを保存（作成または更新）
+     * UserEntityを保存（作成または更新）
      * 
-     * Userに紐づくTodosも一緒に保存
+     * UserEntityに紐づくTodosも一緒に保存
      */
-    public function save(User $user): void;
+    public function save(UserEntity $user): void;
 
     /**
-     * UserIDでUserを検索
+     * UserIDでUserEntityを検索
      * 
      * Todosも一緒に取得
      */
-    public function findById(UserId $userId): ?User;
+    public function findById(UserId $userId): ?UserEntity;
 
     /**
-     * EmailでUserを検索
+     * EmailでUserEntityを検索
      * 
      * Todosも一緒に取得
      */
-    public function findByEmail(Email $email): ?User;
+    public function findByEmail(Email $email): ?UserEntity;
 
     /**
-     * 全Userを取得
+     * 全UserEntityを取得
      * 
-     * @return User[]
+     * @return UserEntity[]
      */
     public function findAll(): array;
 
     /**
-     * Userを削除
+     * UserEntityを削除
      * 
      * カスケードでTodosも削除される
      */

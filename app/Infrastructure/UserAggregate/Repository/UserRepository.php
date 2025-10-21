@@ -3,8 +3,8 @@
 namespace App\Infrastructure\UserAggregate\Repository;
 
 use App\Domain\Shared\ValueObject\DateTimeValue;
-use App\Domain\UserAggregate\Entity\Todo;
-use App\Domain\UserAggregate\Entity\User;
+use App\Domain\UserAggregate\Entity\TodoEntity;
+use App\Domain\UserAggregate\Entity\UserEntity;
 use App\Domain\UserAggregate\Repository\UserRepositoryInterface;
 use App\Domain\UserAggregate\ValueObject\Email;
 use App\Domain\UserAggregate\ValueObject\TaskStatus;
@@ -12,8 +12,8 @@ use App\Domain\UserAggregate\ValueObject\TaskTitle;
 use App\Domain\UserAggregate\ValueObject\TodoId;
 use App\Domain\UserAggregate\ValueObject\UserId;
 use App\Domain\UserAggregate\ValueObject\UserName;
-use App\Models\TodoModel;
-use App\Models\User as UserModel;  // Eloquent Model（Domain層のUserと区別）
+use App\Models\Todo as TodoModel;  // Eloquent Model（Domain層のTodoEntityと区別）
+use App\Models\User as UserModel;  // Eloquent Model（Domain層のUserEntityと区別）
 
 /**
  * UserRepository実装（Eloquent）
@@ -33,7 +33,7 @@ class UserRepository implements UserRepositoryInterface
         return (TodoModel::max('id') ?? 0) + 1;
     }
 
-    public function save(User $user): void
+    public function save(UserEntity $user): void
     {
         // Userを保存
         $userModel = UserModel::updateOrCreate(
@@ -72,7 +72,7 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function findById(UserId $userId): ?User
+    public function findById(UserId $userId): ?UserEntity
     {
         $userModel = UserModel::with('todos')->find($userId->getValue());
         
@@ -83,7 +83,7 @@ class UserRepository implements UserRepositoryInterface
         return $this->toDomain($userModel);
     }
 
-    public function findByEmail(Email $email): ?User
+    public function findByEmail(Email $email): ?UserEntity
     {
         $userModel = UserModel::with('todos')
             ->where('email', $email->getValue())
@@ -119,9 +119,9 @@ class UserRepository implements UserRepositoryInterface
     /**
      * EloquentモデルからDomainエンティティへ変換
      */
-    private function toDomain(UserModel $userModel): User
+    private function toDomain(UserModel $userModel): UserEntity
     {
-        $user = new User(
+        $user = new UserEntity(
             new UserId($userModel->id),
             new UserName($userModel->name),
             new Email($userModel->email),
@@ -129,9 +129,9 @@ class UserRepository implements UserRepositoryInterface
             DateTimeValue::fromString($userModel->created_at)
         );
 
-        // Todosを変換してUserにセット
+        // Todosを変換してUserEntityにセット
         $todos = $userModel->todos->map(function ($todoModel) use ($userModel) {
-            return new Todo(
+            return new TodoEntity(
                 new TodoId($todoModel->id),
                 new UserId($userModel->id),
                 new TaskTitle($todoModel->title),

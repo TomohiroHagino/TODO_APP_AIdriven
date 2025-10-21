@@ -10,12 +10,14 @@ use App\Domain\UserAggregate\ValueObject\UserId;
 use App\Domain\UserAggregate\ValueObject\UserName;
 
 /**
- * Userエンティティ（Aggregate Root）
+ * UserEntity（Aggregate Root）
  * 
  * UserAggregateの集約ルート
- * Todoを所有し、Todoへのすべての操作はUser経由で行う
+ * TodoEntityを所有し、TodoEntityへのすべての操作はUserEntity経由で行う
+ * 
+ * NOTE: Eloquent Modelの App\Models\User とは別物です
  */
-class User
+class UserEntity
 {
     private UserId $id;
     private UserName $name;
@@ -23,7 +25,7 @@ class User
     private string $password;
     private DateTimeValue $createdAt;
     
-    /** @var Todo[] */
+    /** @var TodoEntity[] */
     private array $todos = [];
 
     public function __construct(
@@ -41,7 +43,7 @@ class User
     }
 
     /**
-     * 新しいUserを作成
+     * 新しいUserEntityを作成
      */
     public static function create(
         UserId $id,
@@ -86,28 +88,28 @@ class User
     }
 
     /**
-     * @return Todo[]
+     * @return TodoEntity[]
      */
     public function getTodos(): array
     {
         return $this->todos;
     }
 
-    // Todo management (Aggregate Root の責務)
+    // TodoEntity management (Aggregate Root の責務)
 
     /**
-     * Todoを追加
+     * TodoEntityを追加
      */
-    public function addTodo(TodoId $todoId, TaskTitle $title): Todo
+    public function addTodo(TodoId $todoId, TaskTitle $title): TodoEntity
     {
-        $todo = Todo::create($todoId, $this->id, $title);
+        $todo = TodoEntity::create($todoId, $this->id, $title);
         $this->todos[] = $todo;
         
         return $todo;
     }
 
     /**
-     * Todoを設定（リポジトリから復元時に使用）
+     * TodoEntityを設定（リポジトリから復元時に使用）
      */
     public function setTodos(array $todos): void
     {
@@ -115,9 +117,9 @@ class User
     }
 
     /**
-     * 特定のTodoを取得
+     * 特定のTodoEntityを取得
      */
-    public function findTodo(TodoId $todoId): ?Todo
+    public function findTodo(TodoId $todoId): ?TodoEntity
     {
         foreach ($this->todos as $todo) {
             if ($todo->getId()->equals($todoId)) {
@@ -128,39 +130,39 @@ class User
     }
 
     /**
-     * Todoを削除
+     * TodoEntityを削除
      */
     public function removeTodo(TodoId $todoId): void
     {
         $this->todos = array_values(array_filter(
             $this->todos,
-            fn(Todo $todo) => !$todo->getId()->equals($todoId)
+            fn(TodoEntity $todo) => !$todo->getId()->equals($todoId)
         ));
     }
 
     /**
-     * 完了したTodoのみを取得
+     * 完了したTodoEntityのみを取得
      * 
-     * @return Todo[]
+     * @return TodoEntity[]
      */
     public function getDoneTodos(): array
     {
         return array_filter(
             $this->todos,
-            fn(Todo $todo) => $todo->isDone()
+            fn(TodoEntity $todo) => $todo->isDone()
         );
     }
 
     /**
-     * 未完了のTodoのみを取得
+     * 未完了のTodoEntityのみを取得
      * 
-     * @return Todo[]
+     * @return TodoEntity[]
      */
     public function getPendingTodos(): array
     {
         return array_filter(
             $this->todos,
-            fn(Todo $todo) => $todo->isPending()
+            fn(TodoEntity $todo) => $todo->isPending()
         );
     }
 

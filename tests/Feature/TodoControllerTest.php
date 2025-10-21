@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\TodoModel;
+use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,14 +30,14 @@ class TodoControllerTest extends TestCase
     public function test_index_displays_todos(): void
     {
         // Todosを作成
-        TodoModel::create([
+        Todo::create([
             'user_id' => $this->user->id,
             'title' => 'テストタスク1',
             'is_done' => false,
             'created_at' => now(),
         ]);
         
-        TodoModel::create([
+        Todo::create([
             'user_id' => $this->user->id,
             'title' => 'テストタスク2',
             'is_done' => true,
@@ -53,14 +53,14 @@ class TodoControllerTest extends TestCase
 
     public function test_index_filters_by_done_status(): void
     {
-        TodoModel::create([
+        Todo::create([
             'user_id' => $this->user->id,
             'title' => '未完了タスク',
             'is_done' => false,
             'created_at' => now(),
         ]);
         
-        TodoModel::create([
+        Todo::create([
             'user_id' => $this->user->id,
             'title' => '完了タスク',
             'is_done' => true,
@@ -76,14 +76,14 @@ class TodoControllerTest extends TestCase
 
     public function test_index_filters_by_pending_status(): void
     {
-        $pendingTodo = TodoModel::create([
+        $pendingTodo = Todo::create([
             'user_id' => $this->user->id,
             'title' => 'これは未完了のタスクです',
             'is_done' => false,
             'created_at' => now(),
         ]);
         
-        $doneTodo = TodoModel::create([
+        $doneTodo = Todo::create([
             'user_id' => $this->user->id,
             'title' => 'これは完了したタスクです',
             'is_done' => true,
@@ -140,7 +140,7 @@ class TodoControllerTest extends TestCase
 
     public function test_show_displays_todo(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => 'テストタスク',
             'is_done' => false,
@@ -156,7 +156,7 @@ class TodoControllerTest extends TestCase
     public function test_user_only_sees_own_todos(): void
     {
         // 自分のTodo
-        $myTodo = TodoModel::create([
+        $myTodo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '自分のタスク',
             'is_done' => false,
@@ -165,7 +165,7 @@ class TodoControllerTest extends TestCase
 
         // 他人のTodo
         $otherUser = User::factory()->create();
-        $otherTodo = TodoModel::create([
+        $otherTodo = Todo::create([
             'user_id' => $otherUser->id,
             'title' => '他人のタスク',
             'is_done' => false,
@@ -181,7 +181,7 @@ class TodoControllerTest extends TestCase
 
     public function test_edit_displays_form(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '編集前タスク',
             'is_done' => false,
@@ -196,7 +196,7 @@ class TodoControllerTest extends TestCase
 
     public function test_update_modifies_todo(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '編集前タスク',
             'is_done' => false,
@@ -216,7 +216,7 @@ class TodoControllerTest extends TestCase
 
     public function test_update_validates_title(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => 'タスク',
             'is_done' => false,
@@ -232,7 +232,7 @@ class TodoControllerTest extends TestCase
 
     public function test_destroy_deletes_todo(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '削除するタスク',
             'is_done' => false,
@@ -247,7 +247,7 @@ class TodoControllerTest extends TestCase
 
     public function test_toggle_changes_status_from_pending_to_done(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '未完了タスク',
             'is_done' => false,
@@ -265,7 +265,7 @@ class TodoControllerTest extends TestCase
 
     public function test_toggle_changes_status_from_done_to_pending(): void
     {
-        $todo = TodoModel::create([
+        $todo = Todo::create([
             'user_id' => $this->user->id,
             'title' => '完了タスク',
             'is_done' => true,

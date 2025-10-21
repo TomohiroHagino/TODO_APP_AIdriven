@@ -9,12 +9,14 @@ use App\Domain\UserAggregate\ValueObject\TodoId;
 use App\Domain\UserAggregate\ValueObject\UserId;
 
 /**
- * Todoエンティティ（子エンティティ）
+ * TodoEntity（子エンティティ）
  * 
- * Userに所有される子エンティティ
+ * UserEntityに所有される子エンティティ
  * User Aggregateの一部として存在
+ * 
+ * NOTE: Eloquent Modelの App\Models\Todo とは別物です
  */
-class Todo
+class TodoEntity
 {
     private TodoId $id;
     private UserId $userId;
@@ -37,7 +39,7 @@ class Todo
     }
 
     /**
-     * 新しいTodoを作成
+     * 新しいTodoEntityを作成
      */
     public static function create(
         TodoId $id,

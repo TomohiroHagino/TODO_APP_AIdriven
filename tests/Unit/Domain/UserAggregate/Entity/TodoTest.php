@@ -3,7 +3,7 @@
 namespace Tests\Unit\Domain\UserAggregate\Entity;
 
 use App\Domain\Shared\ValueObject\DateTimeValue;
-use App\Domain\UserAggregate\Entity\Todo;
+use App\Domain\UserAggregate\Entity\TodoEntity;
 use App\Domain\UserAggregate\ValueObject\TaskStatus;
 use App\Domain\UserAggregate\ValueObject\TaskTitle;
 use App\Domain\UserAggregate\ValueObject\TodoId;
@@ -18,7 +18,7 @@ class TodoTest extends TestCase
         $userId = new UserId(1);
         $title = new TaskTitle('買い物');
 
-        $todo = Todo::create($todoId, $userId, $title);
+        $todo = TodoEntity::create($todoId, $userId, $title);
 
         $this->assertEquals($todoId, $todo->getId());
         $this->assertEquals($userId, $todo->getUserId());
@@ -30,7 +30,7 @@ class TodoTest extends TestCase
 
     public function test_change_title(): void
     {
-        $todo = Todo::create(
+        $todo = TodoEntity::create(
             new TodoId(1),
             new UserId(1),
             new TaskTitle('買い物')
@@ -45,7 +45,7 @@ class TodoTest extends TestCase
 
     public function test_toggle_status_from_pending_to_done(): void
     {
-        $todo = Todo::create(
+        $todo = TodoEntity::create(
             new TodoId(1),
             new UserId(1),
             new TaskTitle('買い物')
@@ -61,7 +61,7 @@ class TodoTest extends TestCase
 
     public function test_toggle_status_from_done_to_pending(): void
     {
-        $todo = new Todo(
+        $todo = new TodoEntity(
             new TodoId(1),
             new UserId(1),
             new TaskTitle('買い物'),
@@ -79,13 +79,13 @@ class TodoTest extends TestCase
 
     public function test_get_status(): void
     {
-        $pendingTodo = Todo::create(
+        $pendingTodo = TodoEntity::create(
             new TodoId(1),
             new UserId(1),
             new TaskTitle('買い物')
         );
 
-        $doneTodo = new Todo(
+        $doneTodo = new TodoEntity(
             new TodoId(2),
             new UserId(1),
             new TaskTitle('掃除'),

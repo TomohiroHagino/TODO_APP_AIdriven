@@ -5,9 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Todoテーブルに対応するEloquentモデル
+ * Todo（Eloquent Model）
+ * 
+ * Infrastructure層のORMモデル
+ * Domain層のTodoEntityとは別物
+ * 
+ * NOTE: クラス名は Laravel の規約に従い「Todo」としています
+ *       Domain層の TodoEntity と混同しないよう注意が必要です
+ *       - このクラス: App\Models\Todo (Eloquent ORM)
+ *       - Domain層: App\Domain\UserAggregate\Entity\TodoEntity (Domain Entity)
  */
-class TodoModel extends Model
+class Todo extends Model
 {
     /**
      * テーブル名
@@ -43,7 +51,7 @@ class TodoModel extends Model
      */
     public function user()
     {
-        return $this->belongsTo(UserModel::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
 

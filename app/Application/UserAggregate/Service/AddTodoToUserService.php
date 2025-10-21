@@ -2,7 +2,7 @@
 
 namespace App\Application\UserAggregate\Service;
 
-use App\Domain\UserAggregate\Entity\Todo;
+use App\Domain\UserAggregate\Entity\TodoEntity;
 use App\Domain\UserAggregate\Repository\UserRepositoryInterface;
 use App\Domain\UserAggregate\ValueObject\TaskTitle;
 use App\Domain\UserAggregate\ValueObject\TodoId;
@@ -44,7 +44,7 @@ class AddTodoToUserService
      * 
      * @throws RuntimeException Userが見つからない場合
      */
-    public function handle(int $userId, string $title): Todo
+    public function handle(int $userId, string $title): TodoEntity
     {
         // Userを取得
         $user = $this->repository->findById(new UserId($userId));
