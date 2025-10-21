@@ -19,6 +19,11 @@ class LogHttpRequests
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // .well-known リクエストは無視
+        if (str_starts_with($request->path(), '.well-known')) {
+            return $next($request);
+        }
+
         $startTime = microtime(true);
         
         // リクエスト開始ログ
