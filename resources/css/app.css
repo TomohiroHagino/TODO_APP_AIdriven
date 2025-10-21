@@ -1,5 +1,5 @@
 /* Todo App - BEM CSS */
-@import './todos/common.css';
+@import './common.css';
 @import './todos/index.css';
 @import './todos/show.css';
 @import './todos/edit.css';
