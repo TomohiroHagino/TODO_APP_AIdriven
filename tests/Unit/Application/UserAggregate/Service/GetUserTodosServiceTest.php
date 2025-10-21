@@ -105,5 +105,21 @@ class GetUserTodosServiceTest extends TestCase
 
         $service->handle(999);
     }
+
+    public function test_handle_by_status_throws_exception_when_user_not_found(): void
+    {
+        $repository = $this->createMock(UserRepositoryInterface::class);
+        
+        $repository->expects($this->once())
+            ->method('findById')
+            ->willReturn(null);
+
+        $service = new GetUserTodosService($repository);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('ユーザーが見つかりません（ID: 999）');
+
+        $service->handleByStatus(999, true);
+    }
 }
 

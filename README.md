@@ -131,14 +131,8 @@ app/
 │       │   ├── TodoId.php
 │       │   ├── TaskTitle.php
 │       │   └── TaskStatus.php
-│       ├── Repository/
-│       │   └── UserRepositoryInterface.php
-│       ├── Event/                     # ドメインイベント
-│       │   ├── UserCreated.php
-│       │   ├── TodoAdded.php
-│       │   └── TodoUpdated.php
-│       └── Service/
-│           └── UserDomainService.php  # ドメインサービス
+│       └── Repository/
+│           └── UserRepositoryInterface.php
 │
 ├── Application/                        # アプリケーション層
 │   └── UserAggregate/

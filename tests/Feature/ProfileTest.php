@@ -96,4 +96,51 @@ class ProfileTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_cannot_update_profile_with_duplicate_email(): void
+    {
+        $existingUser = User::factory()->create(['email' => 'existing@example.com']);
+        $user = User::factory()->create(['email' => 'user@example.com']);
+
+        $response = $this
+            ->actingAs($user)
+            ->from('/profile')
+            ->patch('/profile', [
+                'name' => 'Test User',
+                'email' => 'existing@example.com',
+            ]);
+
+        $response
+            ->assertSessionHasErrors(['email'])
+            ->assertRedirect('/profile');
+
+        // ユーザーのメールは変更されていない
+        $user->refresh();
+        $this->assertSame('user@example.com', $user->email);
+    }
+
+    public function test_email_verification_is_reset_when_email_is_changed(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'old@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        $this->assertNotNull($user->email_verified_at);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => 'new@example.com',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+        $this->assertSame('new@example.com', $user->email);
+        $this->assertNull($user->email_verified_at);
+    }
 }
