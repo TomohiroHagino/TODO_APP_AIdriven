@@ -90,21 +90,35 @@ class LogHttpRequests
     }
     
     /**
-     * パラメータを取得
+     * パラメータを取得（機密情報は除外＋送信有無を記録）
      */
     private function getParams(Request $request): array
     {
         $params = [];
+        $sensitiveKeys = $this->getSensitiveKeys();
         
         // クエリパラメータ
         if ($request->query()) {
-            $params = array_merge($params, $request->query());
+            $queryParams = $request->query();
+            // 機密情報を除外
+            foreach ($sensitiveKeys as $key) {
+                unset($queryParams[$key]);
+            }
+            $params = array_merge($params, $queryParams);
         }
         
         // POSTパラメータ（パスワードなど機密情報は除外）
         if ($request->isMethod('POST') || $request->isMethod('PUT') || $request->isMethod('PATCH')) {
-            $input = $request->except(['password', 'password_confirmation', '_token']);
+            // 機密情報を除外してパラメータ取得
+            $input = $request->except($sensitiveKeys);
             $params = array_merge($params, $input);
+            
+            // 機密キーが送信されていた場合は、キーの存在だけ記録（値は取得しない）
+            foreach ($sensitiveKeys as $key) {
+                if ($request->has($key)) {
+                    $params[$key] = '[FILTERED]';
+                }
+            }
         }
         
         // ルートパラメータ
@@ -116,6 +130,24 @@ class LogHttpRequests
         }
         
         return $params;
+    }
+    
+    /**
+     * 機密情報のキーリストを取得
+     */
+    private function getSensitiveKeys(): array
+    {
+        return [
+            'password',
+            'password_confirmation',
+            'current_password',
+            'new_password',
+            'token',
+            '_token',
+            'api_token',
+            'secret',
+            'api_key',
+        ];
     }
     
     /**
