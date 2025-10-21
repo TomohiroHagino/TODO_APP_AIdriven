@@ -24,6 +24,7 @@ class TodoModel extends Model
      * 複数代入可能な属性
      */
     protected $fillable = [
+        'user_id',
         'title',
         'is_done',
         'created_at',
@@ -36,5 +37,13 @@ class TodoModel extends Model
         'is_done' => 'boolean',
         'created_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    /**
+     * このTodoが属するUser
+     */
+    public function user()
+    {
+        return $this->belongsTo(UserModel::class, 'user_id');
+    }
 }
 
