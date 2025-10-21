@@ -8,7 +8,7 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="layout-with-grid">
     <!-- Header Component -->
     <x-header />
 
