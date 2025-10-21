@@ -1,3 +1,4 @@
+え
 @props(['title' => config('app.name', 'Laravel')])
 
 <!DOCTYPE html>
@@ -18,7 +19,7 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.breeze.navigation')
+            <x-breeze.navigation />
 
             <!-- Page Heading -->
             @isset($header)
