@@ -101,6 +101,22 @@ class TodoEntity
     }
 
     /**
+     * ステータスを未完了に戻す
+     */
+    public function markAsPending(): void
+    {
+        $this->status = TaskStatus::pending();
+    }
+
+    /**
+     * ステータスを完了にする
+     */
+    public function markAsDone(): void
+    {
+        $this->status = TaskStatus::done();
+    }
+
+    /**
      * タスクが完了しているか
      */
     public function isDone(): bool

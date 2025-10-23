@@ -26,14 +26,15 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 5. [セットアップ](#-セットアップ)
 6. [アプリケーションの起動](#-アプリケーションの起動)
 7. [初回利用](#-初回利用)
-8. [テスト](#-テスト)
-9. [技術スタック](#-技術スタック)
-10. [主要な設計パターン](#-主要な設計パターン)
-11. [「2つのモデル」問題の解決](#-2つのモデル問題の解決)
-12. [主要なコマンド](#-主要なコマンド)
-13. [今後の拡張案](#-今後の拡張案)
-14. [参考資料](#-参考資料)
-15. [ライセンス](#-ライセンス)
+8. [バッチ処理](#-バッチ処理)
+9. [テスト](#-テスト)
+10. [技術スタック](#-技術スタック)
+11. [主要な設計パターン](#-主要な設計パターン)
+12. [「2つのモデル」問題の解決](#-2つのモデル問題の解決)
+13. [主要なコマンド](#-主要なコマンド)
+14. [今後の拡張案](#-今後の拡張案)
+15. [参考資料](#-参考資料)
+16. [ライセンス](#-ライセンス)
 
 ---
 
@@ -81,6 +82,12 @@ LaravelとDDD（ドメイン駆動設計）で実装した認証付きTodoアプ
 | Todoステータスを切り替える | `ToggleTodoStatusService` | UserからTodoを検索し、完了／未完了を切り替える |
 | ユーザーのTodoを削除する | `DeleteTodoOfUserService` | Userから指定Todoを削除して保存する |
 | ユーザーのTodo一覧を取得する | `GetUserTodosService` | Userの全Todoを取得し、フィルター処理を行う |
+
+### バッチ処理
+
+| ユースケース名 | 対応Service | 実行方法 | 概要 |
+|----------------|--------------|----------|------|
+| 全Todoを未完了に戻す | `ResetAllTodosService` | `php artisan todos:reset-all` | 全ユーザーの全Todoのステータスを未完了に一括変更する |
 
 ---
 
@@ -165,6 +172,7 @@ app/
 │           ├── ToggleTodoStatusService.php
 │           ├── DeleteTodoOfUserService.php
 │           ├── GetUserTodosService.php
+│           ├── ResetAllTodosService.php         # バッチ: 全Todo未完了化
 │           ├── UpdateUserProfileService.php     # プロフィール更新
 │           ├── UpdateUserPasswordService.php    # パスワード更新
 │           └── DeleteUserAccountService.php     # アカウント削除
@@ -173,6 +181,10 @@ app/
 │   └── UserAggregate/
 │       └── Repository/
 │           └── UserRepository.php      # Eloquent実装
+│
+├── Console/                            # コンソール層
+│   └── Commands/
+│       └── ResetAllTodosCommand.php   # バッチコマンド
 │
 ├── Http/                               # プレゼンテーション層
 │   ├── Controllers/
@@ -349,6 +361,51 @@ http://localhost:8000 にアクセス
 
 ---
 
+## 🔄 バッチ処理
+
+### 全Todoを未完了に戻す
+
+全ユーザーの全Todoのステータスを未完了に一括変更するバッチコマンドです。
+
+```bash
+# 確認プロンプトあり
+php artisan todos:reset-all
+
+# 確認なしで実行
+php artisan todos:reset-all --force
+```
+
+**実行例**:
+```bash
+$ php artisan todos:reset-all
+
+ 全てのTodoを未完了に戻します。よろしいですか？ (yes/no) [no]:
+ > yes
+
+処理を開始します...
+
+✓ 処理が完了しました！
+
+┌────────────────────┬──────┐
+│ 項目               │ 件数 │
+├────────────────────┼──────┤
+│ 対象ユーザー数     │ 5    │
+│ 総Todo数           │ 20   │
+│ リセットしたTodo数 │ 12   │
+└────────────────────┴──────┘
+```
+
+**用途**:
+- 定期的なステータスリセット
+- テスト環境のデータリセット
+- 新しい期間の開始時のクリーンアップ
+
+**注意**:
+- 全ユーザーのデータに影響します
+- 本番環境では必ず `--force` なしで実行して確認してください
+
+---
+
 ## 🧪 テスト
 
 ```bash
@@ -413,6 +470,10 @@ php artisan migrate:fresh  # 全テーブル削除して再作成
 # テスト
 php artisan test
 php artisan test --filter TodoControllerTest
+
+# バッチ処理
+php artisan todos:reset-all         # 全Todoを未完了に戻す
+php artisan todos:reset-all --force # 確認なしで実行
 
 # キャッシュクリア
 php artisan cache:clear

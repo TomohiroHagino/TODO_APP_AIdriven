@@ -96,5 +96,39 @@ class TodoTest extends TestCase
         $this->assertTrue($pendingTodo->getStatus()->isPending());
         $this->assertTrue($doneTodo->getStatus()->isDone());
     }
+
+    public function test_mark_as_pending(): void
+    {
+        $todo = new TodoEntity(
+            new TodoId(1),
+            new UserId(1),
+            new TaskTitle('買い物'),
+            TaskStatus::done(),
+            DateTimeValue::now()
+        );
+
+        $this->assertTrue($todo->isDone());
+
+        $todo->markAsPending();
+
+        $this->assertTrue($todo->isPending());
+        $this->assertFalse($todo->isDone());
+    }
+
+    public function test_mark_as_done(): void
+    {
+        $todo = TodoEntity::create(
+            new TodoId(1),
+            new UserId(1),
+            new TaskTitle('買い物')
+        );
+
+        $this->assertTrue($todo->isPending());
+
+        $todo->markAsDone();
+
+        $this->assertTrue($todo->isDone());
+        $this->assertFalse($todo->isPending());
+    }
 }
 
